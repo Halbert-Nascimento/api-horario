@@ -3,6 +3,7 @@ import {
 	getCelula,
 	getCelulaCurso,
 	createCelula,
+	deleteCelula,
 } from "../controller/celulaController";
 
 const router = express.Router();
@@ -11,5 +12,6 @@ const router = express.Router();
 router.get("/", getCelula); // GET /celula
 router.get("/:idCurso", getCelulaCurso); // GET /celula/idCurso
 router.post("/", createCelula); // POST /celula
+router.delete("/:idCelula", deleteCelula); // DELETE /celula/idCelula
 
 export default router;

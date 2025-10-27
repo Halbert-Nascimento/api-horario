@@ -21,10 +21,9 @@ export const getCursoById = async (
 ) => {
 	try {
 		const idCurso = req.params.idCurso;
-		const [rows] = await pool.query(
-			"SELECT * FROM professores WHERE idProfessor = ?",
-			[idCurso],
-		);
+		const [rows] = await pool.query("SELECT * FROM cursos WHERE idCurso = ?", [
+			idCurso,
+		]);
 
 		res.status(200).json(rows);
 	} catch (error) {

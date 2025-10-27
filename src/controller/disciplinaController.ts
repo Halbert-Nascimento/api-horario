@@ -22,7 +22,7 @@ export const getDisciplinaById = async (
 	try {
 		const idDisciplina = req.params.idDisciplina;
 		const [rows] = await pool.query(
-			"SELECT * FROM professores WHERE idProfessor = ?",
+			"SELECT * FROM disciplinas WHERE idDisciplina = ?",
 			[idDisciplina],
 		);
 
