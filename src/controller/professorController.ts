@@ -31,3 +31,42 @@ export const getProfessorById = async (
 		next(error);
 	}
 };
+
+export const createProfessor = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const { nomeProfessor, titulacao, email, curriculo_lattes } = req.body;
+
+		if (!nomeProfessor || !titulacao || !email) {
+			res
+				.status(400)
+				.json({
+					message: "Todos os campos obrigatórios devem ser preenchidos",
+				});
+			return;
+		}
+
+		const [result] = await pool.query(
+			`INSERT INTO professores 
+						(nomeProfessor, titulacao, email, curriculo_lattes) 
+						VALUES (?, ?, ?, ?)`,
+			[nomeProfessor, titulacao, email, curriculo_lattes],
+		);
+
+		res.status(201).json({
+			message: "Professor criado com sucesso",
+			data: {
+				id: (result as any).insertId,
+				nomeProfessor,
+				titulacao,
+				email,
+				curriculo_lattes,
+			},
+		});
+	} catch (error) {
+		next(error);
+	}
+};

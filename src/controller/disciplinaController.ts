@@ -31,3 +31,39 @@ export const getDisciplinaById = async (
 		next(error);
 	}
 };
+
+export const createDisciplina = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const { nomeDisciplina, carga_horaria, modalidade, tipo_sala } = req.body;
+
+		if (!nomeDisciplina || !carga_horaria || !modalidade || !tipo_sala) {
+			res.status(400).json({
+				message: "Todos os campos obrigatórios devem ser preenchidos",
+			});
+			return;
+		}
+
+		const [result] = await pool.query(
+			`INSERT INTO disciplinas 
+						(nomeDisciplina, carga_horaria, modalidade, tipo_sala) 
+						VALUES (?, ?, ?, ?)`,
+			[nomeDisciplina, carga_horaria, modalidade, tipo_sala],
+		);
+
+		res.status(201).json({
+			message: "Disciplina criada com sucesso",
+			data: {
+				nomeDisciplina,
+				carga_horaria,
+				modalidade,
+				tipo_sala,
+			},
+		});
+	} catch (error) {
+		next(error);
+	}
+};
