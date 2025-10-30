@@ -55,9 +55,7 @@ export const createCelula = async (
 		}
 
 		const [result] = await pool.query(
-			`INSERT INTO grade_horario 
-            (idGrade, idDisciplina, idProfessor, dia_semana, semestre) 
-            VALUES (?, ?, ?, ?, ?)`,
+			`CALL stp_cadastrar_celula(?, ?, ?, ?, ?)`,
 			[idGrade, idDisciplina, idProfessor, dia_semana, semestre],
 		);
 
