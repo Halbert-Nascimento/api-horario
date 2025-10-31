@@ -32,6 +32,24 @@ export const getDisciplinaById = async (
 	}
 };
 
+export const getDisciplinaByCurso = async (
+	req: Request<{ idCurso: number }>,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const idCurso = req.params.idCurso;
+		const [rows] = await pool.query(
+			"SELECT * FROM vw_disciplina_curso WHERE idCurso = ?",
+			[idCurso],
+		);
+
+		res.status(200).json(rows);
+	} catch (error) {
+		next(error);
+	}
+};
+
 export const createDisciplina = async (
 	req: Request,
 	res: Response,

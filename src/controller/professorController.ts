@@ -32,6 +32,24 @@ export const getProfessorById = async (
 	}
 };
 
+export const getProfessorByCurso = async (
+	req: Request<{ idCurso: number }>,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const idCurso = req.params.idCurso;
+		const [rows] = await pool.query(
+			"SELECT * FROM vw_professor_curso WHERE idCurso = ?",
+			[idCurso],
+		);
+
+		res.status(200).json(rows);
+	} catch (error) {
+		next(error);
+	}
+};
+
 export const createProfessor = async (
 	req: Request,
 	res: Response,
@@ -41,11 +59,9 @@ export const createProfessor = async (
 		const { nomeProfessor, titulacao, email, curriculo_lattes } = req.body;
 
 		if (!nomeProfessor || !titulacao || !email) {
-			res
-				.status(400)
-				.json({
-					message: "Todos os campos obrigatórios devem ser preenchidos",
-				});
+			res.status(400).json({
+				message: "Todos os campos obrigatórios devem ser preenchidos",
+			});
 			return;
 		}
 
