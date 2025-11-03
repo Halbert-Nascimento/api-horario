@@ -15,15 +15,15 @@ export const getProfessorDisciplina = async (
 };
 
 export const getProfessorDisciplinaById = async (
-	req: Request<{ idProfessor: number }>,
+	req: Request<{ idDisciplina: number }>,
 	res: Response,
 	next: NextFunction,
 ) => {
 	try {
-		const idProfessor = req.params.idProfessor;
+		const idDisciplina = req.params.idDisciplina;
 		const [rows] = await pool.query(
-			"SELECT * FROM vw_disciplina_professor WHERE idProfessor = ?",
-			[idProfessor],
+			"SELECT * FROM vw_disciplina_professor WHERE idDisciplina = ?",
+			[idDisciplina],
 		);
 
 		if (Array.isArray(rows) && rows.length === 0) {
@@ -53,7 +53,7 @@ export const createProfessorDisciplina = async (
 			return;
 		}
 		const [result] = await pool.query(
-			`INSERT INTO professor_disponibilidade 
+			`INSERT INTO disciplina_professor 
         (idProfessor, idDisciplina) 
         VALUES (?, ?)`,
 			[idProfessor, idDisciplina],

@@ -54,6 +54,35 @@ export const createCelula = async (
 			return;
 		}
 
+		// Verificar se o professor já está cadastrado em outra disciplina/curso no mesmo dia
+		const [conflictRows]: any = await pool.query(
+			`SELECT 
+				nomeCurso,
+				nomeDisciplina,
+				nomeProfessor,
+				dia_semana
+			FROM vw_celulas 
+			WHERE idProfessor = ? 
+			AND dia_semana = ? 
+			AND NOT (idDisciplina = ? AND idGrade = ?)`,
+			[idProfessor, dia_semana, idDisciplina, idGrade],
+		);
+
+		if (Array.isArray(conflictRows) && conflictRows.length > 0) {
+			const conflict = conflictRows[0];
+			res.status(409).json({
+				message: "Não é possível cadastrar esta célula",
+				error: `O(A) professor(a) ${conflict.nomeProfessor} já está cadastrado(a) na disciplina "${conflict.nomeDisciplina}" do curso "${conflict.nomeCurso}"`,
+				conflito: {
+					curso: conflict.nomeCurso,
+					disciplina: conflict.nomeDisciplina,
+					professor: conflict.nomeProfessor,
+					dia: conflict.dia_semana,
+				},
+			});
+			return;
+		}
+
 		const [result] = await pool.query(
 			`CALL stp_cadastrar_celula(?, ?, ?, ?, ?)`,
 			[idGrade, idDisciplina, idProfessor, dia_semana, semestre],
@@ -90,33 +119,15 @@ export const deleteCelula = async (
 			return;
 		}
 
-		// Primeiro verifica se a célula existe na view e obtém os IDs necessários
-		const [rows]: any = await pool.query(
-			`SELECT idGrade, idDisciplina, idProfessor 
-             FROM vw_celulas 
-             WHERE idCurso_Disciplina_Professor = ?`,
-			[idCelula],
-		);
-
-		if (Array.isArray(rows) && rows.length === 0) {
-			res.status(404).json({
-				message: "Célula não encontrada",
-			});
-			return;
-		}
-
-		const { idGrade, idDisciplina, idProfessor } = rows[0];
-
-		// Deleta da tabela base grade_horario usando a chave composta
+		// Deleta da tabela grade_horario usando o idCelula
 		const [result]: any = await pool.query(
-			`DELETE FROM grade_horario 
-             WHERE idGrade = ? AND idDisciplina = ? AND idProfessor = ?`,
-			[idGrade, idDisciplina, idProfessor],
+			`DELETE FROM grade_horario WHERE idCurso_Disciplina_Professor = ?`,
+			[idCelula],
 		);
 
 		if (result.affectedRows === 0) {
 			res.status(404).json({
-				message: "Erro ao deletar a célula",
+				message: "Célula não encontrada",
 			});
 			return;
 		}
@@ -125,9 +136,6 @@ export const deleteCelula = async (
 			message: "Célula deletada com sucesso",
 			data: {
 				idCelula,
-				idGrade,
-				idDisciplina,
-				idProfessor,
 			},
 		});
 	} catch (error) {

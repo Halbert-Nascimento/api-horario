@@ -9,7 +9,7 @@ const router = express.Router();
 
 //Rotas Perfil
 router.get("/", getProfessorDisciplina); // GET /professorDisciplina
-router.get("/:idProfessor", getProfessorDisciplinaById); // GET /professorDisciplina/idProfessor
+router.get("/:idDisciplina", getProfessorDisciplinaById); // GET /professorDisciplina/idDisciplina
 router.post("/", createProfessorDisciplina); // POST /professorDisciplina
 
 export default router;
