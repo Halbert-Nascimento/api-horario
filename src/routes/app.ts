@@ -6,6 +6,10 @@ import celulaRoutes from "./celula.routes";
 import cursoRoutes from "./curso.routes";
 import disciplinaRoutes from "./disciplina.routes";
 import professorRoutes from "./professor.routes";
+import gradeRoutes from "./grade.routes";
+import diaSemanaRoutes from "./diaSemana.routes";
+import disponibilidadeRoutes from "./disponibilidade.routes";
+import professorDisciplinaRoutes from "./professorDisciplina.routes";
 
 const app = express();
 
@@ -29,6 +33,10 @@ app.use("/celula", celulaRoutes);
 app.use("/curso", cursoRoutes);
 app.use("/disciplina", disciplinaRoutes);
 app.use("/professor", professorRoutes);
+app.use("/grade", gradeRoutes);
+app.use("/diaSemana", diaSemanaRoutes);
+app.use("/disponibilidade", disponibilidadeRoutes);
+app.use("/professorDisciplina", professorDisciplinaRoutes);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 	console.error(err.stack);
