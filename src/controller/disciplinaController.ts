@@ -56,9 +56,21 @@ export const createDisciplina = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { nomeDisciplina, carga_horaria, modalidade, tipo_sala } = req.body;
+		const {
+			codigoDisciplina,
+			nomeDisciplina,
+			carga_horaria,
+			modalidade,
+			tipo_sala,
+		} = req.body;
 
-		if (!nomeDisciplina || !carga_horaria || !modalidade || !tipo_sala) {
+		if (
+			!codigoDisciplina ||
+			!nomeDisciplina ||
+			!carga_horaria ||
+			!modalidade ||
+			!tipo_sala
+		) {
 			res.status(400).json({
 				message: "Todos os campos obrigatórios devem ser preenchidos",
 			});
@@ -67,14 +79,15 @@ export const createDisciplina = async (
 
 		const [result] = await pool.query(
 			`INSERT INTO disciplinas 
-						(nomeDisciplina, carga_horaria, modalidade, tipo_sala) 
-						VALUES (?, ?, ?, ?)`,
-			[nomeDisciplina, carga_horaria, modalidade, tipo_sala],
+						(codigoDisciplina, nomeDisciplina, carga_horaria, modalidade, tipo_sala) 
+						VALUES (?, ?, ?, ?, ?)`,
+			[codigoDisciplina, nomeDisciplina, carga_horaria, modalidade, tipo_sala],
 		);
 
 		res.status(201).json({
 			message: "Disciplina criada com sucesso",
 			data: {
+				codigoDisciplina,
 				nomeDisciplina,
 				carga_horaria,
 				modalidade,
@@ -150,7 +163,6 @@ export const createCursoDisciplina = async (
 		res.status(201).json({
 			message: "Disciplina vinculada ao curso com sucesso",
 			data: {
-				idCursoDisciplina: result.insertId,
 				idCurso,
 				idDisciplina,
 			},

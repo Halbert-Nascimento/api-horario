@@ -42,7 +42,7 @@ export const createGrade = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { idCurso, semestre_letivo, data_criacao } = req.body;
+		const { idCurso, semestre_letivo } = req.body;
 		if (!idCurso || !semestre_letivo) {
 			res
 				.status(400)
@@ -53,8 +53,8 @@ export const createGrade = async (
 		const [result] = await pool.query(
 			`INSERT INTO grade 
         (idCurso, semestre_letivo, data_criacao) 
-        VALUES (?, ?, ?)`,
-			[idCurso, semestre_letivo, data_criacao],
+        VALUES (?, ?)`,
+			[idCurso, semestre_letivo],
 		);
 
 		res.status(201).json({
@@ -62,7 +62,6 @@ export const createGrade = async (
 			data: {
 				idCurso,
 				semestre_letivo,
-				data_criacao,
 			},
 		});
 	} catch (error) {
