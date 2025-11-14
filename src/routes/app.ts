@@ -11,6 +11,7 @@ import diaSemanaRoutes from "./diaSemana.routes";
 import disponibilidadeRoutes from "./disponibilidade.routes";
 import professorDisciplinaRoutes from "./professorDisciplina.routes";
 import usuarioRoutes from "./usuario.routes";
+import salaRoutes from "./sala.routes";
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use("/diaSemana", diaSemanaRoutes);
 app.use("/disponibilidade", disponibilidadeRoutes);
 app.use("/professorDisciplina", professorDisciplinaRoutes);
 app.use("/usuario", usuarioRoutes);
+app.use("/sala", salaRoutes);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 	console.error(err.stack);

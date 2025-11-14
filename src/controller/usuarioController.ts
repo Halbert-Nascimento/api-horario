@@ -39,12 +39,9 @@ export const createUsuario = async (
 	try {
 		const { nomeUsuario, emailUsuario, senha, idPerfil, ativo } = req.body;
 		if (!nomeUsuario || !emailUsuario || !senha || !idPerfil) {
-			res
-				.status(400)
-				.json({
-					message:
-						"nomeUsuario, emailUsuario, senha e idPerfil são obrigatórios",
-				});
+			res.status(400).json({
+				message: "nomeUsuario, emailUsuario, senha e idPerfil são obrigatórios",
+			});
 			return;
 		}
 		const [result]: any = await pool.query(

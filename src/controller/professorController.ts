@@ -7,7 +7,7 @@ export const getProfessor = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM professores");
+		const [rows] = await pool.query("SELECT * FROM Professores");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -22,7 +22,7 @@ export const getProfessorById = async (
 	try {
 		const idProfessor = req.params.idProfessor;
 		const [rows] = await pool.query(
-			"SELECT * FROM professores WHERE idProfessor = ?",
+			"SELECT * FROM Professores WHERE idProfessor = ?",
 			[idProfessor],
 		);
 
@@ -75,17 +75,25 @@ export const createProfessor = async (
 	try {
 		const {
 			nomeProfessor,
+			email,
 			titulacao,
 			curriculo_lattes,
 			coordenador_idProfessor,
-			idUsuario,
 		} = req.body;
 
 		// Validação dos campos obrigatórios
-		if (!nomeProfessor || !titulacao || !idUsuario) {
+		if (!nomeProfessor || !email || !titulacao) {
 			res.status(400).json({
-				message:
-					"Os campos nomeProfessor, titulacao e idUsuario são obrigatórios",
+				message: "Os campos nomeProfessor, email e titulacao são obrigatórios",
+			});
+			return;
+		}
+
+		// Validação do formato do email
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			res.status(400).json({
+				message: "Formato de email inválido",
 			});
 			return;
 		}
@@ -106,15 +114,15 @@ export const createProfessor = async (
 			return;
 		}
 
-		// Validar se o idUsuario existe
-		const [usuarioRows]: any = await pool.query(
-			"SELECT idUsuario FROM usuarios WHERE idUsuario = ?",
-			[idUsuario],
+		// Verificar se o email já está cadastrado
+		const [emailExists]: any = await pool.query(
+			"SELECT idProfessor FROM Professores WHERE email = ?",
+			[email],
 		);
 
-		if (!Array.isArray(usuarioRows) || usuarioRows.length === 0) {
-			res.status(404).json({
-				message: "Usuário não encontrado",
+		if (Array.isArray(emailExists) && emailExists.length > 0) {
+			res.status(409).json({
+				message: "Este email já está cadastrado",
 			});
 			return;
 		}
@@ -122,7 +130,7 @@ export const createProfessor = async (
 		// Se coordenador_idProfessor foi fornecido, validar se existe
 		if (coordenador_idProfessor) {
 			const [coordenadorRows]: any = await pool.query(
-				"SELECT idProfessor FROM professores WHERE idProfessor = ?",
+				"SELECT idProfessor FROM Professores WHERE idProfessor = ?",
 				[coordenador_idProfessor],
 			);
 
@@ -136,15 +144,15 @@ export const createProfessor = async (
 
 		// Inserir o professor
 		const [result] = await pool.query(
-			`INSERT INTO professores 
-            (nomeProfessor, titulacao, curriculo_lattes, coordenador_idProfessor, idUsuario) 
+			`INSERT INTO Professores 
+            (nomeProfessor, email, titulacao, curriculo_lattes, coordenador_idProfessor) 
             VALUES (?, ?, ?, ?, ?)`,
 			[
 				nomeProfessor,
+				email,
 				titulacao,
 				curriculo_lattes || null,
 				coordenador_idProfessor || null,
-				idUsuario,
 			],
 		);
 
@@ -155,10 +163,10 @@ export const createProfessor = async (
 			data: {
 				idProfessor,
 				nomeProfessor,
+				email,
 				titulacao,
 				curriculo_lattes: curriculo_lattes || null,
 				coordenador_idProfessor: coordenador_idProfessor || null,
-				idUsuario,
 			},
 		});
 	} catch (error) {

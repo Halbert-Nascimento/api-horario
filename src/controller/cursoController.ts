@@ -7,7 +7,7 @@ export const getCurso = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM cursos");
+		const [rows] = await pool.query("SELECT * FROM Cursos");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -21,7 +21,7 @@ export const getCursoById = async (
 ) => {
 	try {
 		const idCurso = req.params.idCurso;
-		const [rows] = await pool.query("SELECT * FROM cursos WHERE idCurso = ?", [
+		const [rows] = await pool.query("SELECT * FROM Cursos WHERE idCurso = ?", [
 			idCurso,
 		]);
 
@@ -57,7 +57,7 @@ export const createCurso = async (
 
 		// Inserir o curso no banco de dados
 		const [result]: any = await pool.query(
-			`INSERT INTO cursos (nomeCurso, descricaoCurso, duracaoSemestres) VALUES (?, ?, ?)`,
+			`INSERT INTO Cursos (nomeCurso, descricaoCurso, duracaoSemestres) VALUES (?, ?, ?)`,
 			[nomeCurso, descricaoCurso || null, duracaoSemestres],
 		);
 

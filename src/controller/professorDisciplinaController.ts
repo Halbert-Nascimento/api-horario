@@ -49,11 +49,11 @@ export const createProfessorDisciplina = async (
 		if (!idProfessor || !idDisciplina) {
 			res
 				.status(400)
-				.json({ message: "idProfessor e idDiaSemana são obrigatórios" });
+				.json({ message: "idProfessor e idDisciplina são obrigatórios" });
 			return;
 		}
 		const [result] = await pool.query(
-			`INSERT INTO disciplina_professor 
+			`INSERT INTO Disciplina_Professor 
         (idProfessor, idDisciplina) 
         VALUES (?, ?)`,
 			[idProfessor, idDisciplina],
