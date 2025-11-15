@@ -45,38 +45,106 @@ export const createCelula = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { idGrade, idDisciplina, idProfessor, dia_semana, semestre } =
+		const { idGrade, idDisciplina, idProfessor, idDiaSemana, semestre } =
 			req.body;
 
 		// Validação dos campos obrigatórios
-		if (!idGrade || !idDisciplina || !idProfessor || !dia_semana || !semestre) {
+		if (
+			!idGrade ||
+			!idDisciplina ||
+			!idProfessor ||
+			!idDiaSemana ||
+			!semestre
+		) {
 			res.status(400).json({ message: "Todos os campos são obrigatórios" });
 			return;
 		}
 
-		// Verificar se o professor já está cadastrado em outra disciplina/curso no mesmo dia
-		const [conflictRows]: any = await pool.query(
+		// Buscar informações da nova célula que está sendo cadastrada
+		const [novaCelulaInfo]: any = await pool.query(
 			`SELECT 
-				nomeCurso,
-				nomeDisciplina,
-				nomeProfessor,
-				dia_semana
-			FROM vw_celulas 
-			WHERE idProfessor = ? 
-			AND dia_semana = ? 
-			AND NOT (idDisciplina = ? AND idGrade = ?)`,
-			[idProfessor, dia_semana, idDisciplina, idGrade],
+                p.nomeProfessor as professor,
+                d.nomeDisciplina as disciplina,
+                c.nomeCurso as curso,
+                ds.diaSemana
+            FROM Professores p
+            CROSS JOIN Disciplinas d
+            CROSS JOIN Cursos c
+            CROSS JOIN Dia_semana ds
+            CROSS JOIN Alocacao_horario ah
+            WHERE p.idProfessor = ?
+            AND d.idDisciplina = ?
+            AND ah.idGrade = ?
+            AND ds.idDiaSemana = ?
+            LIMIT 1`,
+			[idProfessor, idDisciplina, idGrade, idDiaSemana],
 		);
 
-		if (Array.isArray(conflictRows) && conflictRows.length > 0) {
-			const conflict = conflictRows[0];
+		// Verificar se o professor já está cadastrado em outra disciplina/curso no mesmo dia
+		const [professorConflict]: any = await pool.query(
+			`SELECT 
+                curso,
+                disciplina,
+                professor,
+                dia_semana
+            FROM vw_celulas 
+            WHERE idProfessor = ? 
+            AND idDiaSemana = ?`,
+			[idProfessor, idDiaSemana],
+		);
+
+		if (Array.isArray(professorConflict) && professorConflict.length > 0) {
+			const conflict = professorConflict[0];
+			const novaCelula = novaCelulaInfo[0];
 			res.status(409).json({
-				message: "Não é possível cadastrar esta célula",
-				error: `O(A) professor(a) ${conflict.nomeProfessor} já está cadastrado(a) na disciplina "${conflict.nomeDisciplina}" do curso "${conflict.nomeCurso}"`,
+				message: `O professor ${novaCelula.professor} já está alocado na disciplina "${conflict.disciplina}" do curso "${conflict.curso}" no dia ${conflict.dia_semana}`,
+				tipo: "professor",
+				tentativa: {
+					curso: novaCelula.curso,
+					disciplina: novaCelula.disciplina,
+					professor: novaCelula.professor,
+					dia: novaCelula.dia_semana,
+				},
 				conflito: {
-					curso: conflict.nomeCurso,
-					disciplina: conflict.nomeDisciplina,
-					professor: conflict.nomeProfessor,
+					curso: conflict.curso,
+					disciplina: conflict.disciplina,
+					professor: conflict.professor,
+					dia: conflict.dia_semana,
+				},
+			});
+			return;
+		}
+
+		// Verificar se a disciplina já está cadastrada neste curso no mesmo dia
+		const [disciplinaConflict]: any = await pool.query(
+			`SELECT 
+                curso,
+                disciplina,
+                professor,
+                dia_semana
+            FROM vw_celulas 
+            WHERE idDisciplina = ? 
+            AND idGrade = ? 
+            AND idDiaSemana = ?`,
+			[idDisciplina, idGrade, idDiaSemana],
+		);
+
+		if (Array.isArray(disciplinaConflict) && disciplinaConflict.length > 0) {
+			const conflict = disciplinaConflict[0];
+			const novaCelula = novaCelulaInfo[0];
+			res.status(409).json({
+				message: `A disciplina "${novaCelula.disciplina}" do curso "${novaCelula.curso}" já está cadastrada no dia ${novaCelula.dia_semana} com o professor ${conflict.professor}`,
+				tipo: "disciplina",
+				tentativa: {
+					curso: novaCelula.curso,
+					disciplina: novaCelula.disciplina,
+					professor: novaCelula.professor,
+					dia: novaCelula.dia_semana,
+				},
+				conflito: {
+					curso: conflict.curso,
+					disciplina: conflict.disciplina,
+					professor: conflict.professor,
 					dia: conflict.dia_semana,
 				},
 			});
@@ -85,7 +153,7 @@ export const createCelula = async (
 
 		const [result] = await pool.query(
 			`CALL stp_cadastrar_celula(?, ?, ?, ?, ?)`,
-			[idGrade, idDisciplina, idProfessor, dia_semana, semestre],
+			[idGrade, idDisciplina, idProfessor, idDiaSemana, semestre],
 		);
 
 		res.status(201).json({
@@ -94,7 +162,7 @@ export const createCelula = async (
 				idGrade,
 				idDisciplina,
 				idProfessor,
-				dia_semana,
+				idDiaSemana,
 				semestre,
 			},
 		});
@@ -119,9 +187,9 @@ export const deleteCelula = async (
 			return;
 		}
 
-		// Deleta da tabela grade_horario usando o idCelula
+		// Deleta da tabela Alocacao_horario usando o idCelula
 		const [result]: any = await pool.query(
-			`DELETE FROM grade_horario WHERE idCurso_Disciplina_Professor = ?`,
+			`DELETE FROM Alocacao_horario WHERE idCurso_Disciplina_Professor = ?`,
 			[idCelula],
 		);
 

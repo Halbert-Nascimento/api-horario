@@ -55,7 +55,7 @@ export const createDisponibilidade = async (
 			return;
 		}
 		const [result] = await pool.query(
-			`INSERT INTO professor_disponibilidade 
+			`INSERT INTO Professor_Disponibilidade 
         (idProfessor, idDiaSemana) 
         VALUES (?, ?)`,
 			[idProfessor, idDiaSemana],

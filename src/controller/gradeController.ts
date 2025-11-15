@@ -7,7 +7,7 @@ export const getGrade = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM grade");
+		const [rows] = await pool.query("SELECT * FROM Grade");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -21,7 +21,7 @@ export const getGradeById = async (
 ) => {
 	try {
 		const idGrade = req.params.idGrade;
-		const [rows] = await pool.query("SELECT * FROM grade WHERE idGrade = ?", [
+		const [rows] = await pool.query("SELECT * FROM Grade WHERE idGrade = ?", [
 			idGrade,
 		]);
 
@@ -42,7 +42,7 @@ export const createGrade = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { idCurso, semestre_letivo, data_criacao } = req.body;
+		const { idCurso, semestre_letivo } = req.body;
 		if (!idCurso || !semestre_letivo) {
 			res
 				.status(400)
@@ -51,10 +51,10 @@ export const createGrade = async (
 		}
 
 		const [result] = await pool.query(
-			`INSERT INTO grade 
+			`INSERT INTO Grade 
         (idCurso, semestre_letivo, data_criacao) 
-        VALUES (?, ?, ?)`,
-			[idCurso, semestre_letivo, data_criacao],
+        VALUES (?, ?)`,
+			[idCurso, semestre_letivo],
 		);
 
 		res.status(201).json({
@@ -62,7 +62,6 @@ export const createGrade = async (
 			data: {
 				idCurso,
 				semestre_letivo,
-				data_criacao,
 			},
 		});
 	} catch (error) {
