@@ -333,13 +333,34 @@ migratePasswords();
 
 ## Próximos Passos / Melhorias Sugeridas
 
+- [ ] **[Recomendado]** Implementar rate limiting nos endpoints de autenticação (login, registro)
 - [ ] Implementar refresh tokens
-- [ ] Rate limiting no endpoint de login
 - [ ] Registro de tentativas de login falhadas
 - [ ] Reset de senha via email
 - [ ] Two-factor authentication (2FA)
 - [ ] Roles mais granulares com permissões específicas
 - [ ] Auditoria de ações dos usuários
+
+### Nota sobre Rate Limiting
+
+⚠️ **Importante**: O CodeQL identificou que os endpoints de autenticação (/auth/login, /register, /perfil) não possuem rate limiting. Isso é uma recomendação de segurança para prevenir ataques de força bruta.
+
+**Recomendação para produção**: Implementar rate limiting usando bibliotecas como:
+- `express-rate-limit` - limitação de requisições
+- `express-slow-down` - desaceleração progressiva
+
+Exemplo de implementação:
+```typescript
+import rateLimit from 'express-rate-limit';
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // máximo 5 tentativas
+  message: 'Muitas tentativas de login. Tente novamente em 15 minutos.'
+});
+
+router.post('/login', loginLimiter, login);
+```
 
 ## Troubleshooting
 
