@@ -1,5 +1,6 @@
 import pool from "../config/db";
 import { Request, Response, NextFunction } from "express";
+import bcrypt from "bcrypt";
 
 export const getUsuario = async (
 	req: Request,
@@ -44,11 +45,16 @@ export const createUsuario = async (
 			});
 			return;
 		}
+
+		// Hash da senha com bcrypt
+		const saltRounds = 10;
+		const senhaHash = await bcrypt.hash(senha, saltRounds);
+
 		const [result]: any = await pool.query(
 			`INSERT INTO usuarios 
         (nomeUsuario, emailUsuario, senha, idPerfil, ativo)
         VALUES (?, ?, ?, ?, 1)`,
-			[nomeUsuario, emailUsuario, senha, idPerfil, ativo],
+			[nomeUsuario, emailUsuario, senhaHash, idPerfil, ativo],
 		);
 		res.status(201).json({
 			message: "Usuário criado com sucesso",

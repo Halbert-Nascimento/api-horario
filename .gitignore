@@ -3,3 +3,17 @@ node_modules/
 
 # Environment file
 .env
+
+# Build output
+dist/
+
+# Uploads
+uploads/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

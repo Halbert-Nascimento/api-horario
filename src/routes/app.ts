@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import mysql from "mysql2/promise";
 import cors from "cors";
+import dotenv from "dotenv";
 
 import celulaRoutes from "./celula.routes";
 import cursoRoutes from "./curso.routes";
@@ -12,8 +13,32 @@ import disponibilidadeRoutes from "./disponibilidade.routes";
 import professorDisciplinaRoutes from "./professorDisciplina.routes";
 import usuarioRoutes from "./usuario.routes";
 import salaRoutes from "./sala.routes";
+import perfilRoutes from "./perfil.routes";
+import authRoutes from "./auth.routes";
+import registerRoutes from "./register.routes";
+
+// Carregar variáveis de ambiente
+dotenv.config();
 
 const app = express();
+
+// Validar variáveis de ambiente críticas
+if (!process.env.JWT_SECRET) {
+	console.error("ERRO: JWT_SECRET não está definido no arquivo .env");
+	process.exit(1);
+}
+
+if (
+	!process.env.DB_HOST ||
+	!process.env.DB_USER ||
+	!process.env.DB_PASSWORD ||
+	!process.env.DB_DATABASE
+) {
+	console.error(
+		"ERRO: Variáveis de ambiente do banco de dados não estão definidas",
+	);
+	process.exit(1);
+}
 
 app.use(
 	cors({
@@ -41,6 +66,9 @@ app.use("/disponibilidade", disponibilidadeRoutes);
 app.use("/professorDisciplina", professorDisciplinaRoutes);
 app.use("/usuario", usuarioRoutes);
 app.use("/sala", salaRoutes);
+app.use("/perfil", perfilRoutes);
+app.use("/auth", authRoutes);
+app.use("/register", registerRoutes);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 	console.error(err.stack);
