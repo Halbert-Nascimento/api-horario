@@ -15,30 +15,34 @@ O sistema implementa:
 
 ## Estrutura de Tabelas
 
-### Tabela `perfil`
+### Tabela `perfis`
 ```sql
-CREATE TABLE perfil (
+CREATE TABLE perfis (
     idPerfil INT AUTO_INCREMENT PRIMARY KEY,
-    nomePerfil VARCHAR(50) NOT NULL UNIQUE,
-    descricao VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    nomePerfil VARCHAR(100) NOT NULL UNIQUE
+) ENGINE = InnoDB;
+
+-- Perfis padrão (nesta ordem):
+-- 1. Professor
+-- 2. Coordenador
+-- 3. Admin
 ```
 
 ### Tabela `usuarios`
 ```sql
 CREATE TABLE usuarios (
     idUsuario INT AUTO_INCREMENT PRIMARY KEY,
-    nomeUsuario VARCHAR(255) NOT NULL,
-    emailUsuario VARCHAR(255) NOT NULL UNIQUE,
+    nomeUsuario VARCHAR(100) NOT NULL,
+    emailUsuario VARCHAR(100) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,  -- Hash bcrypt
-    idPerfil INT,
-    ativo TINYINT(1) DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (idPerfil) REFERENCES perfil(idPerfil) ON DELETE SET NULL
-);
+    idPerfil INT NOT NULL,
+    ativo TINYINT NOT NULL DEFAULT 1,
+    criadoEm TIMESTAMP NULL,
+    criadoPor INT NULL,
+    atualizadoEm TIMESTAMP NULL,
+    atualizadoPor INT NULL,
+    FOREIGN KEY (idPerfil) REFERENCES perfis(idPerfil) ON DELETE NO ACTION
+) ENGINE = InnoDB;
 ```
 
 ## Endpoints da API
@@ -121,10 +125,16 @@ Lista todos os perfis.
 [
   {
     "idPerfil": 1,
-    "nomePerfil": "Admin",
-    "descricao": "Administrador do sistema"
+    "nomePerfil": "Professor"
   },
-  ...
+  {
+    "idPerfil": 2,
+    "nomePerfil": "Coordenador"
+  },
+  {
+    "idPerfil": 3,
+    "nomePerfil": "Admin"
+  }
 ]
 ```
 

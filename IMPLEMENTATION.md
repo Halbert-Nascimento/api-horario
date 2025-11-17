@@ -84,9 +84,9 @@ mysql -u root -p api_horario < database/schema_auth.sql
 ```
 
 Isso criará:
-- Tabela `perfil` (idPerfil, nomePerfil, descricao)
+- Tabela `perfis` (idPerfil, nomePerfil)
 - Tabela `usuarios` (se não existir)
-- Perfis padrão: Admin, Professor, Coordenador
+- Perfis padrão na ordem: Professor (1), Coordenador (2), Admin (3)
 - Índices para performance
 
 ### 2. Configurar Variáveis de Ambiente

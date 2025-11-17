@@ -7,7 +7,7 @@ export const getPerfis = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM perfil");
+		const [rows] = await pool.query("SELECT * FROM perfis");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -22,7 +22,7 @@ export const getPerfilById = async (
 	try {
 		const idPerfil = req.params.idPerfil;
 		const [rows] = await pool.query(
-			"SELECT * FROM perfil WHERE idPerfil = ?",
+			"SELECT * FROM perfis WHERE idPerfil = ?",
 			[idPerfil],
 		);
 		res.status(200).json(rows);
@@ -45,7 +45,7 @@ export const createPerfil = async (
 			return;
 		}
 		const [result]: any = await pool.query(
-			`INSERT INTO perfil (nomePerfil) VALUES (?)`,
+			`INSERT INTO perfis (nomePerfil) VALUES (?)`,
 			[nomePerfil],
 		);
 		res.status(201).json({

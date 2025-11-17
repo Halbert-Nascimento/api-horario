@@ -47,7 +47,7 @@ export const login = async (
 		let nomePerfil = null;
 		if (usuario.idPerfil) {
 			const [perfilRows]: any = await pool.query(
-				"SELECT nomePerfil FROM perfil WHERE idPerfil = ?",
+				"SELECT nomePerfil FROM perfis WHERE idPerfil = ?",
 				[usuario.idPerfil],
 			);
 			if (perfilRows.length > 0) {

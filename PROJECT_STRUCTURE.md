@@ -144,29 +144,32 @@ Cliente ← {message, data}
 
 ## 🗄️ Schema do Banco
 
-### Tabela: perfil
+### Tabela: perfis
 ```sql
 idPerfil (PK, AUTO_INCREMENT)
-nomePerfil (VARCHAR(50), UNIQUE)
-descricao (VARCHAR(255))
-created_at (TIMESTAMP)
-updated_at (TIMESTAMP)
+nomePerfil (VARCHAR(100), UNIQUE)
 ```
+
+**Perfis padrão (nesta ordem):**
+- 1: Professor
+- 2: Coordenador
+- 3: Admin
 
 ### Tabela: usuarios
 ```sql
 idUsuario (PK, AUTO_INCREMENT)
-nomeUsuario (VARCHAR(255))
-emailUsuario (VARCHAR(255), UNIQUE)
+nomeUsuario (VARCHAR(100))
+emailUsuario (VARCHAR(100), UNIQUE)
 senha (VARCHAR(255)) -- Hash bcrypt
-idPerfil (FK → perfil.idPerfil)
-ativo (TINYINT(1))
-created_at (TIMESTAMP)
-updated_at (TIMESTAMP)
+idPerfil (FK → perfis.idPerfil)
+ativo (TINYINT)
+criadoEm (TIMESTAMP)
+criadoPor (INT)
+atualizadoEm (TIMESTAMP)
+atualizadoPor (INT)
 
-INDEX: emailUsuario
-INDEX: idPerfil
-INDEX: ativo
+INDEX: fk_perfil_usuario_idx (idPerfil)
+INDEX: nomeUsuario_idx (nomeUsuario)
 ```
 
 ## 🔐 Token JWT Payload
