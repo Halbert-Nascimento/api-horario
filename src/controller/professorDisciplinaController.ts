@@ -17,7 +17,7 @@ export const getProfessorDisciplina = async (
 		// Admin vê todas as vinculações
 		if (user.perfil_id === 1) {
 			const [vinculacoes]: any = await pool.query(
-				"SELECT * FROM Professor_Disciplina",
+				"SELECT * FROM Disciplina_Professor",
 			);
 			res.status(200).json(vinculacoes);
 			return;
@@ -37,7 +37,7 @@ export const getProfessorDisciplina = async (
 		if (user.perfil_id === 3) {
 			// Professor vê apenas suas próprias vinculações
 			const [vinculacoes]: any = await pool.query(
-				"SELECT * FROM Professor_Disciplina WHERE idProfessor = ?",
+				"SELECT * FROM Disciplina_Professor WHERE idProfessor = ?",
 				[professor[0].idProfessor],
 			);
 			res.status(200).json(vinculacoes);
@@ -47,7 +47,7 @@ export const getProfessorDisciplina = async (
 		if (user.perfil_id === 2) {
 			// Coordenador vê vinculações de professores do seu curso
 			const [vinculacoes]: any = await pool.query(
-				`SELECT DISTINCT pd.* FROM Professor_Disciplina pd
+				`SELECT DISTINCT pd.* FROM Disciplina_Professor pd
          INNER JOIN Curso_Disciplina cd ON pd.idDisciplina = cd.idDisciplina
          INNER JOIN Professor_Curso pc ON cd.idCurso = pc.idCurso
          WHERE pc.idProfessor = ?`,
@@ -87,7 +87,7 @@ export const getProfessorDisciplinaById = async (
 		// Admin pode ver vinculações de qualquer disciplina
 		if (user.perfil_id === 1) {
 			const [vinculacoes]: any = await pool.query(
-				"SELECT * FROM Professor_Disciplina WHERE idDisciplina = ?",
+				"SELECT * FROM Disciplina_Professor WHERE idDisciplina = ?",
 				[id],
 			);
 			res.status(200).json(vinculacoes);
@@ -108,7 +108,7 @@ export const getProfessorDisciplinaById = async (
 		if (user.perfil_id === 3) {
 			// Professor vê apenas suas próprias vinculações naquela disciplina
 			const [vinculacoes]: any = await pool.query(
-				"SELECT * FROM Professor_Disciplina WHERE idDisciplina = ? AND idProfessor = ?",
+				"SELECT * FROM Disciplina_Professor WHERE idDisciplina = ? AND idProfessor = ?",
 				[id, professor[0].idProfessor],
 			);
 			res.status(200).json(vinculacoes);
@@ -118,7 +118,7 @@ export const getProfessorDisciplinaById = async (
 		if (user.perfil_id === 2) {
 			// Coordenador vê vinculações da disciplina se ela pertence ao seu curso
 			const [vinculacoes]: any = await pool.query(
-				`SELECT pd.* FROM Professor_Disciplina pd
+				`SELECT pd.* FROM Disciplina_Professor pd
          INNER JOIN Curso_Disciplina cd ON pd.idDisciplina = cd.idDisciplina
          INNER JOIN Professor_Curso pc ON cd.idCurso = pc.idCurso
          WHERE pd.idDisciplina = ? AND pc.idProfessor = ?`,
@@ -160,7 +160,7 @@ export const createProfessorDisciplina = async (
 		if (user.perfil_id === 1) {
 			// Verificar se o vínculo já existe
 			const [existente]: any = await pool.query(
-				"SELECT * FROM Professor_Disciplina WHERE idProfessor = ? AND idDisciplina = ?",
+				"SELECT * FROM Disciplina_Professor WHERE idProfessor = ? AND idDisciplina = ?",
 				[idProfessor, idDisciplina],
 			);
 
@@ -170,7 +170,7 @@ export const createProfessorDisciplina = async (
 			}
 
 			await pool.query(
-				"INSERT INTO Professor_Disciplina (idProfessor, idDisciplina) VALUES (?, ?)",
+				"INSERT INTO Disciplina_Professor (idProfessor, idDisciplina) VALUES (?, ?)",
 				[idProfessor, idDisciplina],
 			);
 			res.status(201).json({ message: "Vínculo criado com sucesso" });
@@ -221,7 +221,7 @@ export const createProfessorDisciplina = async (
 
 			// Verificar se o vínculo já existe
 			const [existente]: any = await pool.query(
-				"SELECT * FROM Professor_Disciplina WHERE idProfessor = ? AND idDisciplina = ?",
+				"SELECT * FROM Disciplina_Professor WHERE idProfessor = ? AND idDisciplina = ?",
 				[idProfessor, idDisciplina],
 			);
 
@@ -231,7 +231,7 @@ export const createProfessorDisciplina = async (
 			}
 
 			await pool.query(
-				"INSERT INTO Professor_Disciplina (idProfessor, idDisciplina) VALUES (?, ?)",
+				"INSERT INTO Disciplina_Professor (idProfessor, idDisciplina) VALUES (?, ?)",
 				[idProfessor, idDisciplina],
 			);
 			res.status(201).json({ message: "Vínculo criado com sucesso" });
