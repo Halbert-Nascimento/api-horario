@@ -3,11 +3,13 @@ import {
 	getDiaSemana,
 	getDiaSemanaById,
 } from "../controller/diaSemanaController";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-//Rotas Perfil
-router.get("/", getDiaSemana); // GET /diaSemana
-router.get("/:idDiaSemana", getDiaSemanaById); // GET /diaSemana/idDiaSemana
+//Rotas DiaSemana
+// Todos os perfis autenticados podem visualizar dias da semana
+router.get("/", authMiddleware, getDiaSemana); // GET /diaSemana
+router.get("/:idDiaSemana", authMiddleware, getDiaSemanaById); // GET /diaSemana/idDiaSemana
 
 export default router;

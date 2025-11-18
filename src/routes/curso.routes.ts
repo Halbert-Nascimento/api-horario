@@ -4,12 +4,17 @@ import {
 	getCursoById,
 	createCurso,
 } from "../controller/cursoController";
+import { authMiddleware } from "../middleware/authMiddleware";
+import { checkRole } from "../middleware/roleMiddleware";
 
 const router = express.Router();
 
-//Rotas Perfil
-router.get("/", getCurso); // GET /curso
-router.get("/:idCurso", getCursoById); // GET /curso/idCurso
-router.post("/", createCurso); // POST /curso
+//Rotas Curso
+// Todos os perfis autenticados podem visualizar cursos
+router.get("/", authMiddleware, getCurso); // GET /curso
+router.get("/:idCurso", authMiddleware, getCursoById); // GET /curso/idCurso
+
+// Apenas Admin pode criar cursos
+router.post("/", authMiddleware, checkRole([3]), createCurso); // POST /curso
 
 export default router;
