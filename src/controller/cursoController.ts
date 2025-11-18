@@ -15,14 +15,21 @@ export const getCurso = async (
 };
 
 export const getCursoById = async (
-	req: Request<{ idCurso: number }>,
+	req: Request<{ idCurso: string }>,
 	res: Response,
 	next: NextFunction,
-) => {
+): Promise<void> => {
 	try {
-		const idCurso = req.params.idCurso;
+		const { idCurso } = req.params;
+		const id = parseInt(idCurso, 10);
+
+		if (isNaN(id)) {
+			res.status(400).json({ error: "ID inválido" });
+			return;
+		}
+
 		const [rows] = await pool.query("SELECT * FROM Cursos WHERE idCurso = ?", [
-			idCurso,
+			id,
 		]);
 
 		res.status(200).json(rows);

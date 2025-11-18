@@ -3,11 +3,11 @@ import pool from "../config/db";
 
 /**
  * Middleware para verificar ownership de recursos baseado no perfil do usuário
- * 
+ *
  * Regras:
- * - Admin (3): Acesso total a tudo
+ * - Admin (1): Acesso total a tudo
  * - Coordenador (2): Acesso apenas ao seu curso
- * - Professor (1): Acesso somente visualização (validado na rota)
+ * - Professor (3): Acesso somente visualização (validado na rota)
  */
 
 /**
@@ -29,7 +29,7 @@ export const checkCursoOwnership = async (
 		}
 
 		// Admin tem acesso total
-		if (user.perfil_id === 3) {
+		if (user.perfil_id === 1) {
 			next();
 			return;
 		}
@@ -98,7 +98,7 @@ export const checkGradeOwnership = async (
 		}
 
 		// Admin tem acesso total
-		if (user.perfil_id === 3) {
+		if (user.perfil_id === 1) {
 			next();
 			return;
 		}
@@ -182,7 +182,7 @@ export const checkAlocacaoOwnership = async (
 		}
 
 		// Admin tem acesso total
-		if (user.perfil_id === 3) {
+		if (user.perfil_id === 1) {
 			next();
 			return;
 		}
@@ -225,7 +225,7 @@ export const checkAlocacaoOwnership = async (
 			return;
 		}
 
-		if (user.perfil_id === 1) {
+		if (user.perfil_id === 3) {
 			// Professor: só pode acessar suas próprias alocações
 			if (alocacao[0].idProfessor !== professor[0].idProfessor) {
 				res.status(403).json({
@@ -272,7 +272,7 @@ export const checkAlocacaoOwnership = async (
 
 /**
  * Middleware genérico para bloquear edições de Professor
- * Professor (perfil 1) só pode visualizar, nunca editar
+ * Professor (perfil 3) só pode visualizar, nunca editar
  */
 export const preventProfessorEdit = (
 	req: Request,
@@ -289,7 +289,7 @@ export const preventProfessorEdit = (
 	}
 
 	// Professor não pode editar nada
-	if (user.perfil_id === 1) {
+	if (user.perfil_id === 3) {
 		res.status(403).json({
 			message:
 				"Professores não têm permissão para editar. Apenas visualização é permitida.",

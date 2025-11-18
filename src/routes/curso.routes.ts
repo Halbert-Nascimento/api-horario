@@ -6,6 +6,7 @@ import {
 } from "../controller/cursoController";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { checkRole } from "../middleware/roleMiddleware";
+import { preventProfessorEdit } from "../middleware/permissionMiddleware";
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
 router.get("/", authMiddleware, getCurso); // GET /curso
 router.get("/:idCurso", authMiddleware, getCursoById); // GET /curso/idCurso
 
-// Apenas Admin pode criar cursos
-router.post("/", authMiddleware, checkRole([3]), createCurso); // POST /curso
+// Apenas Admin pode criar cursos (perfil 1)
+router.post("/", authMiddleware, checkRole([1]), createCurso); // POST /curso
 
 export default router;

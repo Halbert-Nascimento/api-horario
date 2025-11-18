@@ -17,15 +17,22 @@ export const getDisponibilidade = async (
 };
 
 export const getDisponibilidadeById = async (
-	req: Request<{ idProfessor: number }>,
+	req: Request<{ idProfessor: string }>,
 	res: Response,
 	next: NextFunction,
-) => {
+): Promise<void> => {
 	try {
-		const idProfessor = req.params.idProfessor;
+		const { idProfessor } = req.params;
+		const id = parseInt(idProfessor, 10);
+
+		if (isNaN(id)) {
+			res.status(400).json({ error: "ID do professor inválido" });
+			return;
+		}
+
 		const [rows] = await pool.query(
 			"SELECT * FROM vw_disponbibilidade_professor WHERE idProfessor = ?",
-			[idProfessor],
+			[id],
 		);
 
 		if (Array.isArray(rows) && rows.length === 0) {

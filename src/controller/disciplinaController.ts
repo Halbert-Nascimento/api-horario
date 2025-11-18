@@ -15,15 +15,22 @@ export const getDisciplina = async (
 };
 
 export const getDisciplinaById = async (
-	req: Request<{ idDisciplina: number }>,
+	req: Request<{ idDisciplina: string }>,
 	res: Response,
 	next: NextFunction,
-) => {
+): Promise<void> => {
 	try {
-		const idDisciplina = req.params.idDisciplina;
+		const { idDisciplina } = req.params;
+		const id = parseInt(idDisciplina, 10);
+
+		if (isNaN(id)) {
+			res.status(400).json({ error: "ID inválido" });
+			return;
+		}
+
 		const [rows] = await pool.query(
 			"SELECT * FROM Disciplinas WHERE idDisciplina = ?",
-			[idDisciplina],
+			[id],
 		);
 
 		res.status(200).json(rows);
@@ -33,12 +40,19 @@ export const getDisciplinaById = async (
 };
 
 export const getDisciplinaByCurso = async (
-	req: Request<{ idCurso: number }>,
+	req: Request<{ idCurso: string }>,
 	res: Response,
 	next: NextFunction,
-) => {
+): Promise<void> => {
 	try {
-		const idCurso = req.params.idCurso;
+		const { idCurso } = req.params;
+		const id = parseInt(idCurso, 10);
+
+		if (isNaN(id)) {
+			res.status(400).json({ error: "ID do curso inválido" });
+			return;
+		}
+
 		const [rows] = await pool.query(
 			"SELECT * FROM vw_disciplina_curso WHERE idCurso = ?",
 			[idCurso],

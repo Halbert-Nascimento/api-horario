@@ -7,18 +7,33 @@ import {
 	createCursoDisciplina,
 } from "../controller/disciplinaController";
 import { authMiddleware } from "../middleware/authMiddleware";
-import { preventProfessorEdit } from "../middleware/permissionMiddleware";
+import {
+	preventProfessorEdit,
+	checkCursoOwnership,
+} from "../middleware/permissionMiddleware";
 
 const router = express.Router();
 
 //Rotas Disciplina
-// Professor pode visualizar, mas não pode criar/editar
+// Todos os perfis podem visualizar disciplinas
 router.get("/", authMiddleware, getDisciplina); // GET /disciplina
-router.get("/:idDisciplina", authMiddleware, getDisciplinaById); // GET /disciplina/idDisciplina
-router.get("/curso/:idCurso", authMiddleware, getDisciplinaByCurso); // GET /disciplina/curso/idCurso
+router.get("/:idDisciplina", authMiddleware, getDisciplinaById); // GET /disciplina/:idDisciplina
 
-// Apenas Admin e Coordenador podem criar disciplinas
+// Professor vê apenas disciplinas do seu curso, Coordenador do seu curso, Admin vê todas
+router.get(
+	"/curso/:idCurso",
+	authMiddleware,
+	checkCursoOwnership,
+	getDisciplinaByCurso,
+); // GET /disciplina/curso/:idCurso
+
+// Apenas Admin e Coordenador podem criar disciplinas (Professor bloqueado)
 router.post("/", authMiddleware, preventProfessorEdit, createDisciplina); // POST /disciplina
-router.post("/curso", authMiddleware, preventProfessorEdit, createCursoDisciplina); // POST /disciplina/curso
+router.post(
+	"/curso",
+	authMiddleware,
+	preventProfessorEdit,
+	createCursoDisciplina,
+); // POST /disciplina/curso
 
 export default router;

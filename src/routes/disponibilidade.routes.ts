@@ -5,16 +5,17 @@ import {
 	createDisponibilidade,
 } from "../controller/disponibilidadeController";
 import { authMiddleware } from "../middleware/authMiddleware";
-import { preventProfessorEdit } from "../middleware/permissionMiddleware";
 
 const router = express.Router();
 
 //Rotas Disponibilidade
-// Todos os perfis autenticados podem visualizar disponibilidades
+// Professor pode gerenciar sua própria disponibilidade
+// Coordenador pode gerenciar disponibilidades de professores do seu curso
+// Admin tem acesso total
 router.get("/", authMiddleware, getDisponibilidade); // GET /disponibilidade
-router.get("/:idProfessor", authMiddleware, getDisponibilidadeById); // GET /disponibilidade/idProfessor
+router.get("/:idProfessor", authMiddleware, getDisponibilidadeById); // GET /disponibilidade/:idProfessor
 
-// Apenas Admin e Coordenador podem criar disponibilidades
-router.post("/", authMiddleware, preventProfessorEdit, createDisponibilidade); // POST /disponibilidade
+// Todos os perfis podem criar disponibilidade (professor cria a sua própria)
+router.post("/", authMiddleware, createDisponibilidade); // POST /disponibilidade
 
 export default router;
