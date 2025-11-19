@@ -5,6 +5,7 @@ import {
 	getDisciplinaByCurso,
 	createDisciplina,
 	createCursoDisciplina,
+	getDisciplinaByCursoSemstre,
 } from "../controller/disciplinaController";
 import { authMiddleware } from "../middleware/authMiddleware";
 import {
@@ -23,8 +24,14 @@ router.get("/:idDisciplina", authMiddleware, getDisciplinaById); // GET /discipl
 router.get(
 	"/curso/:idCurso/periodo/:periodo",
 
-	getDisciplinaByCurso,
+	getDisciplinaByCursoSemstre,
 ); // GET /disciplina/curso/:idCurso/periodo/:periodo
+
+router.get(
+	"/curso/:idCurso",
+
+	getDisciplinaByCurso,
+);
 
 // Apenas Admin e Coordenador podem criar disciplinas (Professor bloqueado)
 router.post("/", authMiddleware, preventProfessorEdit, createDisciplina); // POST /disciplina

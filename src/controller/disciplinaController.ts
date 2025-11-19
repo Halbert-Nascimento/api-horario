@@ -39,7 +39,7 @@ export const getDisciplinaById = async (
 	}
 };
 
-export const getDisciplinaByCurso = async (
+export const getDisciplinaByCursoSemstre = async (
 	req: Request<{ idCurso: string; periodo: string }>,
 	res: Response,
 	next: NextFunction,
@@ -63,6 +63,32 @@ export const getDisciplinaByCurso = async (
 			`SELECT * FROM vw_disciplina_curso 
              WHERE idCurso = ? AND periodo = ?`,
 			[cursoId, periodoNum],
+		);
+
+		res.status(200).json(rows);
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getDisciplinaByCurso = async (
+	req: Request<{ idCurso: string }>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
+	try {
+		const { idCurso } = req.params;
+		const cursoId = parseInt(idCurso, 10);
+
+		if (isNaN(cursoId)) {
+			res.status(400).json({ error: "ID do curso inválido" });
+			return;
+		}
+
+		const [rows] = await pool.query(
+			`SELECT * FROM vw_disciplina_curso 
+             WHERE idCurso = ?`,
+			[cursoId],
 		);
 
 		res.status(200).json(rows);
