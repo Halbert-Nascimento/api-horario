@@ -7,7 +7,7 @@ export const getSala = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM Salas");
+		const [rows] = await pool.query("SELECT * FROM sala");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -21,7 +21,7 @@ export const getSalaById = async (
 ) => {
 	try {
 		const idSala = req.params.idSala;
-		const [rows] = await pool.query("SELECT * FROM Salas WHERE idSala = ?", [
+		const [rows] = await pool.query("SELECT * FROM sala WHERE idSala = ?", [
 			idSala,
 		]);
 		if (Array.isArray(rows) && rows.length === 0) {
@@ -44,9 +44,10 @@ export const createSala = async (
 			codigoSala,
 			nomeSala,
 			capacidadeSala,
+			metrosQuadrados,
 			tipoSala,
 			recursos,
-			localizcao,
+			localizacaoSala,
 		} = req.body;
 
 		// Validação dos campos obrigatórios
@@ -83,7 +84,7 @@ export const createSala = async (
 
 		// Verificar se o código da sala já existe
 		const [codigoExists]: any = await pool.query(
-			"SELECT idSala FROM Salas WHERE codigoSala = ?",
+			"SELECT idSala FROM sala WHERE codigoSala = ?",
 			[codigoSala],
 		);
 
@@ -96,16 +97,17 @@ export const createSala = async (
 
 		// Inserir a sala
 		const [result] = await pool.query(
-			`INSERT INTO Salas 
-      (codigoSala, nomeSala, capacidadeSala, tipoSala, recursos, localizacaoSala) 
-      VALUES (?, ?, ?, ?, ?, ?)`,
+			`INSERT INTO sala 
+      (codigoSala, nomeSala, capacidadeSala, metrosQuadrados, tipoSala, recursos, localizacaoSala) 
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
 			[
 				codigoSala,
 				nomeSala,
 				capacidadeSala,
+				metrosQuadrados || null,
 				tipoSala,
 				recursos || null,
-				localizcao || null,
+				localizacaoSala || null,
 			],
 		);
 
@@ -118,9 +120,10 @@ export const createSala = async (
 				codigoSala,
 				nomeSala,
 				capacidadeSala,
+				metrosQuadrados: metrosQuadrados || null,
 				tipoSala,
 				recursos: recursos || null,
-				localizcao: localizcao || null,
+				localizacaoSala: localizacaoSala || null,
 			},
 		});
 	} catch (error) {

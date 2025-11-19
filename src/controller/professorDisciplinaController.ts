@@ -53,7 +53,7 @@ export const createProfessorDisciplina = async (
 			return;
 		}
 		const [result] = await pool.query(
-			`INSERT INTO Disciplina_Professor 
+			`INSERT INTO disciplina_professor 
         (idProfessor, idDisciplina) 
         VALUES (?, ?)`,
 			[idProfessor, idDisciplina],
