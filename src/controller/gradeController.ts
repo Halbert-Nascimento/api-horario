@@ -7,7 +7,7 @@ export const getGrade = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM Grade");
+		const [rows] = await pool.query("SELECT * FROM grade");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -21,7 +21,7 @@ export const getGradeById = async (
 ) => {
 	try {
 		const idGrade = req.params.idGrade;
-		const [rows] = await pool.query("SELECT * FROM Grade WHERE idGrade = ?", [
+		const [rows] = await pool.query("SELECT * FROM grade WHERE idGrade = ?", [
 			idGrade,
 		]);
 
@@ -42,26 +42,27 @@ export const createGrade = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { idCurso, semestre_letivo } = req.body;
-		if (!idCurso || !semestre_letivo) {
+		const { idCurso, anoLetivo, semestreLetivo } = req.body;
+		if (!idCurso || !anoLetivo || !semestreLetivo) {
 			res
 				.status(400)
-				.json({ message: "idCurso e semestre_letivo são obrigatórios" });
+				.json({ message: "idCurso, anoLetivo e semestreLetivo são obrigatórios" });
 			return;
 		}
 
 		const [result] = await pool.query(
-			`INSERT INTO Grade 
-        (idCurso, semestre_letivo, data_criacao) 
-        VALUES (?, ?)`,
-			[idCurso, semestre_letivo],
+			`INSERT INTO grade 
+        (idCurso, anoLetivo, semestreLetivo, criadoEm) 
+        VALUES (?, ?, ?, ?)`,
+			[idCurso, anoLetivo, semestreLetivo, new Date()],
 		);
 
 		res.status(201).json({
 			message: "Grade criada com sucesso",
 			data: {
 				idCurso,
-				semestre_letivo,
+				anoLetivo,
+				semestreLetivo,
 			},
 		});
 	} catch (error) {
