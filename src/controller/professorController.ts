@@ -16,14 +16,14 @@ export const getProfessor = async (
 
 		// Admin vê todos os professores
 		if (user.perfil_id === 1) {
-			const [professores]: any = await pool.query("SELECT * FROM Professores");
+			const [professores]: any = await pool.query("SELECT * FROM professor");
 			res.status(200).json(professores);
 			return;
 		}
 
 		// Coordenador e Professor veem apenas professores dos seus cursos
 		const [professor]: any = await pool.query(
-			"SELECT * FROM Professores WHERE idUsuario = ?",
+			"SELECT * FROM professor WHERE idUsuario = ?",
 			[user.id],
 		);
 
@@ -34,9 +34,9 @@ export const getProfessor = async (
 
 		// Buscar professores dos mesmos cursos
 		const [professores]: any = await pool.query(
-			`SELECT DISTINCT p.* FROM Professores p
-       INNER JOIN Professor_Curso pc1 ON p.idProfessor = pc1.idProfessor
-       INNER JOIN Professor_Curso pc2 ON pc1.idCurso = pc2.idCurso
+			`SELECT DISTINCT p.* FROM professor p
+       INNER JOIN professor_curso pc1 ON p.idProfessor = pc1.idProfessor
+       INNER JOIN professor_curso pc2 ON pc1.idCurso = pc2.idCurso
        WHERE pc2.idProfessor = ?`,
 			[professor[0].idProfessor],
 		);
@@ -71,7 +71,7 @@ export const getProfessorById = async (
 		// Admin pode ver qualquer professor
 		if (user.perfil_id === 1) {
 			const [professor]: any = await pool.query(
-				"SELECT * FROM Professores WHERE idProfessor = ?",
+				"SELECT * FROM professor WHERE idProfessor = ?",
 				[id],
 			);
 
@@ -86,7 +86,7 @@ export const getProfessorById = async (
 
 		// Coordenador e Professor só podem ver professores dos mesmos cursos
 		const [professorLogado]: any = await pool.query(
-			"SELECT * FROM Professores WHERE idUsuario = ?",
+			"SELECT * FROM professor WHERE idUsuario = ?",
 			[user.id],
 		);
 
@@ -96,9 +96,9 @@ export const getProfessorById = async (
 		}
 
 		const [professor]: any = await pool.query(
-			`SELECT DISTINCT p.* FROM Professores p
-       INNER JOIN Professor_Curso pc1 ON p.idProfessor = pc1.idProfessor
-       INNER JOIN Professor_Curso pc2 ON pc1.idCurso = pc2.idCurso
+			`SELECT DISTINCT p.* FROM professor p
+       INNER JOIN professor_curso pc1 ON p.idProfessor = pc1.idProfessor
+       INNER JOIN professor_curso pc2 ON pc1.idCurso = pc2.idCurso
        WHERE p.idProfessor = ? AND pc2.idProfessor = ?`,
 			[id, professorLogado[0].idProfessor],
 		);
@@ -140,9 +140,9 @@ export const getProfessorByCoordenador = async (
 		// Admin pode ver professores de qualquer coordenador
 		if (user.perfil_id === 1) {
 			const [professores]: any = await pool.query(
-				`SELECT DISTINCT p.* FROM Professores p
-         INNER JOIN Professor_Curso pc1 ON p.idProfessor = pc1.idProfessor
-         INNER JOIN Professor_Curso pc2 ON pc1.idCurso = pc2.idCurso
+				`SELECT DISTINCT p.* FROM professor p
+         INNER JOIN professor_curso pc1 ON p.idProfessor = pc1.idProfessor
+         INNER JOIN professor_curso pc2 ON pc1.idCurso = pc2.idCurso
          WHERE pc2.idProfessor = ?`,
 				[id],
 			);
@@ -152,7 +152,7 @@ export const getProfessorByCoordenador = async (
 
 		// Coordenador e Professor só podem ver seus próprios dados
 		const [professorLogado]: any = await pool.query(
-			"SELECT * FROM Professores WHERE idUsuario = ?",
+			"SELECT * FROM professor WHERE idUsuario = ?",
 			[user.id],
 		);
 
@@ -171,9 +171,9 @@ export const getProfessorByCoordenador = async (
 		}
 
 		const [professores]: any = await pool.query(
-			`SELECT DISTINCT p.* FROM Professores p
-       INNER JOIN Professor_Curso pc1 ON p.idProfessor = pc1.idProfessor
-       INNER JOIN Professor_Curso pc2 ON pc1.idCurso = pc2.idCurso
+			`SELECT DISTINCT p.* FROM professor p
+       INNER JOIN professor_curso pc1 ON p.idProfessor = pc1.idProfessor
+       INNER JOIN professor_curso pc2 ON pc1.idCurso = pc2.idCurso
        WHERE pc2.idProfessor = ?`,
 			[id],
 		);
@@ -200,8 +200,8 @@ export const getProfessorByCurso = async (
 
 		// O middleware checkCursoOwnership já validou o acesso ao curso
 		const [professores]: any = await pool.query(
-			`SELECT p.* FROM Professores p
-       INNER JOIN Professor_Curso pc ON p.idProfessor = pc.idProfessor
+			`SELECT p.* FROM professor p
+       INNER JOIN professor_curso pc ON p.idProfessor = pc.idProfessor
        WHERE pc.idCurso = ?`,
 			[id],
 		);
@@ -276,7 +276,7 @@ export const createProfessor = async (
 
 		// Verificar se o email já está cadastrado
 		const [emailExists]: any = await pool.query(
-			"SELECT idProfessor FROM Professores WHERE email = ?",
+			"SELECT idProfessor FROM professor WHERE email = ?",
 			[email],
 		);
 
@@ -290,7 +290,7 @@ export const createProfessor = async (
 		// Se coordenador_idProfessor foi fornecido, validar se existe
 		if (coordenador_idProfessor) {
 			const [coordenadorRows]: any = await pool.query(
-				"SELECT idProfessor FROM Professores WHERE idProfessor = ?",
+				"SELECT idProfessor FROM professor WHERE idProfessor = ?",
 				[coordenador_idProfessor],
 			);
 

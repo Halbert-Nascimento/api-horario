@@ -16,14 +16,14 @@ export const getGrade = async (
 
 		// Admin vê todas as grades
 		if (user.perfil_id === 1) {
-			const [grades]: any = await pool.query("SELECT * FROM Grade");
+			const [grades]: any = await pool.query("SELECT * FROM grade");
 			res.status(200).json(grades);
 			return;
 		}
 
 		// Coordenador e Professor veem apenas grades dos seus cursos
 		const [professor]: any = await pool.query(
-			"SELECT * FROM Professores WHERE idUsuario = ?",
+			"SELECT * FROM professor WHERE idUsuario = ?",
 			[user.id],
 		);
 
@@ -34,8 +34,8 @@ export const getGrade = async (
 
 		// Buscar grades dos cursos vinculados ao professor
 		const [grades]: any = await pool.query(
-			`SELECT DISTINCT g.* FROM Grade g
-       INNER JOIN Professor_Curso pc ON g.idCurso = pc.idCurso
+			`SELECT DISTINCT g.* FROM grade g
+       INNER JOIN professor_curso pc ON g.idCurso = pc.idCurso
        WHERE pc.idProfessor = ?`,
 			[professor[0].idProfessor],
 		);
@@ -63,7 +63,7 @@ export const getGradeById = async (
 		// O middleware checkGradeOwnership já validou o acesso
 		// Buscar a grade
 		const [grade]: any = await pool.query(
-			"SELECT * FROM Grade WHERE idGrade = ?",
+			"SELECT * FROM grade WHERE idGrade = ?",
 			[id],
 		);
 
@@ -115,7 +115,7 @@ export const createGrade = async (
 		// Coordenador só pode criar grade para seu curso
 		if (user.perfil_id === 2) {
 			const [professor]: any = await pool.query(
-				"SELECT * FROM Professores WHERE idUsuario = ?",
+				"SELECT * FROM professor WHERE idUsuario = ?",
 				[user.id],
 			);
 
@@ -126,7 +126,7 @@ export const createGrade = async (
 
 			// Verificar se o coordenador está vinculado ao curso
 			const [vinculo]: any = await pool.query(
-				"SELECT * FROM Professor_Curso WHERE idProfessor = ? AND idCurso = ?",
+				"SELECT * FROM professor_curso WHERE idProfessor = ? AND idCurso = ?",
 				[professor[0].idProfessor, idCurso],
 			);
 

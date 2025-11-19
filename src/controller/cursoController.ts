@@ -7,7 +7,7 @@ export const getCurso = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM Cursos");
+		const [rows] = await pool.query("SELECT * FROM curso");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -28,7 +28,7 @@ export const getCursoById = async (
 			return;
 		}
 
-		const [rows] = await pool.query("SELECT * FROM Cursos WHERE idCurso = ?", [
+		const [rows] = await pool.query("SELECT * FROM curso WHERE idCurso = ?", [
 			id,
 		]);
 

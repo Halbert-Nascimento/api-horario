@@ -19,13 +19,12 @@ const router = express.Router();
 router.get("/", authMiddleware, getDisciplina); // GET /disciplina
 router.get("/:idDisciplina", authMiddleware, getDisciplinaById); // GET /disciplina/:idDisciplina
 
-// Professor vê apenas disciplinas do seu curso, Coordenador do seu curso, Admin vê todas
+// Professor vê apenas disciplinas do seu curso e período, Coordenador do seu curso, Admin vê todas
 router.get(
-	"/curso/:idCurso",
-	authMiddleware,
-	checkCursoOwnership,
+	"/curso/:idCurso/periodo/:periodo",
+
 	getDisciplinaByCurso,
-); // GET /disciplina/curso/:idCurso
+); // GET /disciplina/curso/:idCurso/periodo/:periodo
 
 // Apenas Admin e Coordenador podem criar disciplinas (Professor bloqueado)
 router.post("/", authMiddleware, preventProfessorEdit, createDisciplina); // POST /disciplina

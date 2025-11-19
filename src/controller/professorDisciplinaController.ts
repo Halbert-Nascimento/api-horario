@@ -17,7 +17,7 @@ export const getProfessorDisciplina = async (
 		// Admin vê todas as vinculações
 		if (user.perfil_id === 1) {
 			const [vinculacoes]: any = await pool.query(
-				"SELECT * FROM Disciplina_Professor",
+				"SELECT * FROM disciplina_professor",
 			);
 			res.status(200).json(vinculacoes);
 			return;
@@ -25,7 +25,7 @@ export const getProfessorDisciplina = async (
 
 		// Coordenador e Professor veem apenas vinculações dos seus cursos
 		const [professor]: any = await pool.query(
-			"SELECT * FROM Professores WHERE idUsuario = ?",
+			"SELECT * FROM professor WHERE idUsuario = ?",
 			[user.id],
 		);
 
@@ -37,7 +37,7 @@ export const getProfessorDisciplina = async (
 		if (user.perfil_id === 3) {
 			// Professor vê apenas suas próprias vinculações
 			const [vinculacoes]: any = await pool.query(
-				"SELECT * FROM Disciplina_Professor WHERE idProfessor = ?",
+				"SELECT * FROM disciplina_professor WHERE idProfessor = ?",
 				[professor[0].idProfessor],
 			);
 			res.status(200).json(vinculacoes);
@@ -47,9 +47,9 @@ export const getProfessorDisciplina = async (
 		if (user.perfil_id === 2) {
 			// Coordenador vê vinculações de professores do seu curso
 			const [vinculacoes]: any = await pool.query(
-				`SELECT DISTINCT pd.* FROM Disciplina_Professor pd
-         INNER JOIN Curso_Disciplina cd ON pd.idDisciplina = cd.idDisciplina
-         INNER JOIN Professor_Curso pc ON cd.idCurso = pc.idCurso
+				`SELECT DISTINCT pd.* FROM disciplina_professor pd
+         INNER JOIN curso_disciplina cd ON pd.idDisciplina = cd.idDisciplina
+         INNER JOIN professor_curso pc ON cd.idCurso = pc.idCurso
          WHERE pc.idProfessor = ?`,
 				[professor[0].idProfessor],
 			);
@@ -87,7 +87,7 @@ export const getProfessorDisciplinaById = async (
 		// Admin pode ver vinculações de qualquer disciplina
 		if (user.perfil_id === 1) {
 			const [vinculacoes]: any = await pool.query(
-				"SELECT * FROM Disciplina_Professor WHERE idDisciplina = ?",
+				"SELECT * FROM disciplina_professor WHERE idDisciplina = ?",
 				[id],
 			);
 			res.status(200).json(vinculacoes);
@@ -96,7 +96,7 @@ export const getProfessorDisciplinaById = async (
 
 		// Coordenador e Professor só podem ver vinculações de disciplinas dos seus cursos
 		const [professor]: any = await pool.query(
-			"SELECT * FROM Professores WHERE idUsuario = ?",
+			"SELECT * FROM professor WHERE idUsuario = ?",
 			[user.id],
 		);
 
@@ -108,7 +108,7 @@ export const getProfessorDisciplinaById = async (
 		if (user.perfil_id === 3) {
 			// Professor vê apenas suas próprias vinculações naquela disciplina
 			const [vinculacoes]: any = await pool.query(
-				"SELECT * FROM Disciplina_Professor WHERE idDisciplina = ? AND idProfessor = ?",
+				"SELECT * FROM disciplina_professor WHERE idDisciplina = ? AND idProfessor = ?",
 				[id, professor[0].idProfessor],
 			);
 			res.status(200).json(vinculacoes);
@@ -118,9 +118,9 @@ export const getProfessorDisciplinaById = async (
 		if (user.perfil_id === 2) {
 			// Coordenador vê vinculações da disciplina se ela pertence ao seu curso
 			const [vinculacoes]: any = await pool.query(
-				`SELECT pd.* FROM Disciplina_Professor pd
-         INNER JOIN Curso_Disciplina cd ON pd.idDisciplina = cd.idDisciplina
-         INNER JOIN Professor_Curso pc ON cd.idCurso = pc.idCurso
+				`SELECT pd.* FROM disciplina_professor pd
+         INNER JOIN curso_disciplina cd ON pd.idDisciplina = cd.idDisciplina
+         INNER JOIN professor_curso pc ON cd.idCurso = pc.idCurso
          WHERE pd.idDisciplina = ? AND pc.idProfessor = ?`,
 				[id, professor[0].idProfessor],
 			);
@@ -160,7 +160,7 @@ export const createProfessorDisciplina = async (
 		if (user.perfil_id === 1) {
 			// Verificar se o vínculo já existe
 			const [existente]: any = await pool.query(
-				"SELECT * FROM Disciplina_Professor WHERE idProfessor = ? AND idDisciplina = ?",
+				"SELECT * FROM disciplina_professor WHERE idProfessor = ? AND idDisciplina = ?",
 				[idProfessor, idDisciplina],
 			);
 
@@ -180,7 +180,7 @@ export const createProfessorDisciplina = async (
 		// Coordenador só pode vincular professores e disciplinas do seu curso
 		if (user.perfil_id === 2) {
 			const [professorLogado]: any = await pool.query(
-				"SELECT * FROM Professores WHERE idUsuario = ?",
+				"SELECT * FROM professor WHERE idUsuario = ?",
 				[user.id],
 			);
 
@@ -191,8 +191,8 @@ export const createProfessorDisciplina = async (
 
 			// Verificar se o professor a ser vinculado pertence ao curso do coordenador
 			const [vinculoProfessor]: any = await pool.query(
-				`SELECT pc1.* FROM Professor_Curso pc1
-         INNER JOIN Professor_Curso pc2 ON pc1.idCurso = pc2.idCurso
+				`SELECT pc1.* FROM professor_curso pc1
+         INNER JOIN professor_curso pc2 ON pc1.idCurso = pc2.idCurso
          WHERE pc1.idProfessor = ? AND pc2.idProfessor = ?`,
 				[idProfessor, professorLogado[0].idProfessor],
 			);
@@ -206,8 +206,8 @@ export const createProfessorDisciplina = async (
 
 			// Verificar se a disciplina pertence ao curso do coordenador
 			const [vinculoDisciplina]: any = await pool.query(
-				`SELECT cd.* FROM Curso_Disciplina cd
-         INNER JOIN Professor_Curso pc ON cd.idCurso = pc.idCurso
+				`SELECT cd.* FROM curso_disciplina cd
+         INNER JOIN professor_curso pc ON cd.idCurso = pc.idCurso
          WHERE cd.idDisciplina = ? AND pc.idProfessor = ?`,
 				[idDisciplina, professorLogado[0].idProfessor],
 			);
@@ -221,7 +221,7 @@ export const createProfessorDisciplina = async (
 
 			// Verificar se o vínculo já existe
 			const [existente]: any = await pool.query(
-				"SELECT * FROM Disciplina_Professor WHERE idProfessor = ? AND idDisciplina = ?",
+				"SELECT * FROM disciplina_professor WHERE idProfessor = ? AND idDisciplina = ?",
 				[idProfessor, idDisciplina],
 			);
 

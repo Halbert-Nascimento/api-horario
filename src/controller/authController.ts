@@ -21,7 +21,7 @@ export const login = async (
 
 		// Buscar usuário pelo email
 		const [rows]: any = await pool.query(
-			"SELECT * FROM usuarios WHERE emailUsuario = ?",
+			"SELECT * FROM usuario WHERE emailUsuario = ?",
 			[email],
 		);
 
@@ -47,12 +47,23 @@ export const login = async (
 		let nomePerfil = null;
 		if (usuario.idPerfil) {
 			const [perfilRows]: any = await pool.query(
-				"SELECT nomePerfil FROM perfis WHERE idPerfil = ?",
+				"SELECT nomePerfil FROM perfil WHERE idPerfil = ?",
 				[usuario.idPerfil],
 			);
 			if (perfilRows.length > 0) {
 				nomePerfil = perfilRows[0].nomePerfil;
 			}
+		}
+
+		// Buscar curso do usuário a partir da view vw_usuario_curso (opcional)
+		let idCurso = null;
+		const [cursosRows]: any = await pool.query(
+			"SELECT idCurso FROM vw_usuario_curso WHERE idUsuario = ? LIMIT 1",
+			[usuario.idUsuario],
+		);
+
+		if (cursosRows.length > 0) {
+			idCurso = cursosRows[0].idCurso;
 		}
 
 		// Gerar token JWT
@@ -61,12 +72,13 @@ export const login = async (
 			throw new Error("JWT_SECRET não configurado");
 		}
 
-		// Payload do token inclui id, email, perfil_id e role
+		// Payload do token inclui id, email, perfil_id, role e idCurso (opcional)
 		const tokenPayload = {
 			id: usuario.idUsuario,
 			email: usuario.emailUsuario,
 			perfil_id: usuario.idPerfil,
 			role: nomePerfil,
+			...(idCurso && { idCurso }), // Só inclui idCurso se existir
 		};
 
 		const token = jwt.sign(tokenPayload, jwtSecret, { expiresIn: "1h" });
@@ -80,6 +92,7 @@ export const login = async (
 				nome: usuario.nomeUsuario,
 				perfil: nomePerfil,
 				perfil_id: usuario.idPerfil,
+				...(idCurso && { idCurso }), // Só inclui idCurso se existir
 			},
 		});
 	} catch (error) {

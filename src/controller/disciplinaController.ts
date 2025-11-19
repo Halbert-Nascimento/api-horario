@@ -7,7 +7,7 @@ export const getDisciplina = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM Disciplinas");
+		const [rows] = await pool.query("SELECT * FROM disciplina");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -29,7 +29,7 @@ export const getDisciplinaById = async (
 		}
 
 		const [rows] = await pool.query(
-			"SELECT * FROM Disciplinas WHERE idDisciplina = ?",
+			"SELECT * FROM disciplina WHERE idDisciplina = ?",
 			[id],
 		);
 
@@ -40,22 +40,29 @@ export const getDisciplinaById = async (
 };
 
 export const getDisciplinaByCurso = async (
-	req: Request<{ idCurso: string }>,
+	req: Request<{ idCurso: string; periodo: string }>,
 	res: Response,
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		const { idCurso } = req.params;
-		const id = parseInt(idCurso, 10);
+		const { idCurso, periodo } = req.params;
+		const cursoId = parseInt(idCurso, 10);
+		const periodoNum = parseInt(periodo, 10);
 
-		if (isNaN(id)) {
+		if (isNaN(cursoId)) {
 			res.status(400).json({ error: "ID do curso inválido" });
 			return;
 		}
 
+		if (isNaN(periodoNum)) {
+			res.status(400).json({ error: "Período inválido" });
+			return;
+		}
+
 		const [rows] = await pool.query(
-			"SELECT * FROM vw_disciplina_curso WHERE idCurso = ?",
-			[idCurso],
+			`SELECT * FROM vw_disciplina_curso 
+             WHERE idCurso = ? AND periodo = ?`,
+			[cursoId, periodoNum],
 		);
 
 		res.status(200).json(rows);
@@ -134,7 +141,7 @@ export const createDisciplina = async (
 
 		// Verificar se o curso existe
 		const [cursoRows]: any = await pool.query(
-			"SELECT idCurso FROM Cursos WHERE idCurso = ?",
+			"SELECT idCurso FROM curso WHERE idCurso = ?",
 			[idCurso],
 		);
 
@@ -204,7 +211,7 @@ export const createCursoDisciplina = async (
 
 		// Verificar se o curso existe
 		const [cursoRows]: any = await pool.query(
-			"SELECT idCurso FROM Cursos WHERE idCurso = ?",
+			"SELECT idCurso FROM curso WHERE idCurso = ?",
 			[idCurso],
 		);
 
@@ -217,7 +224,7 @@ export const createCursoDisciplina = async (
 
 		// Verificar se a disciplina existe
 		const [disciplinaRows]: any = await pool.query(
-			"SELECT idDisciplina FROM Disciplinas WHERE idDisciplina = ?",
+			"SELECT idDisciplina FROM disciplina WHERE idDisciplina = ?",
 			[idDisciplina],
 		);
 

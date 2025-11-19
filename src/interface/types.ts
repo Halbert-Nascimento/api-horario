@@ -21,3 +21,11 @@ export interface CelulaCursoViewInterface {
 	dia_semana: string;
 	semestre: string;
 }
+
+export interface UserPayload {
+	id: number;
+	email: string;
+	perfil_id: number;
+	role: string;
+	idCurso?: number; // Opcional - apenas para Coordenador e Professor
+}

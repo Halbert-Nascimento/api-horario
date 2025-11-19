@@ -7,7 +7,7 @@ export const getSala = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM Salas");
+		const [rows] = await pool.query("SELECT * FROM sala");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -21,7 +21,7 @@ export const getSalaById = async (
 ) => {
 	try {
 		const idSala = req.params.idSala;
-		const [rows] = await pool.query("SELECT * FROM Salas WHERE idSala = ?", [
+		const [rows] = await pool.query("SELECT * FROM sala WHERE idSala = ?", [
 			idSala,
 		]);
 		if (Array.isArray(rows) && rows.length === 0) {
@@ -83,7 +83,7 @@ export const createSala = async (
 
 		// Verificar se o código da sala já existe
 		const [codigoExists]: any = await pool.query(
-			"SELECT idSala FROM Salas WHERE codigoSala = ?",
+			"SELECT idSala FROM sala WHERE codigoSala = ?",
 			[codigoSala],
 		);
 

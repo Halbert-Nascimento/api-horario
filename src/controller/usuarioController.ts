@@ -8,7 +8,7 @@ export const getUsuario = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM usuarios");
+		const [rows] = await pool.query("SELECT * FROM usuario");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -16,15 +16,22 @@ export const getUsuario = async (
 };
 
 export const getUsuarioById = async (
-	req: Request<{ idUsuario: number }>,
+	req: Request<{ idUsuario: string }>,
 	res: Response,
 	next: NextFunction,
-) => {
+): Promise<void> => {
 	try {
-		const idUsuario = req.params.idUsuario;
+		const { idUsuario } = req.params;
+		const id = parseInt(idUsuario, 10);
+
+		if (isNaN(id)) {
+			res.status(400).json({ error: "ID do usuário inválido" });
+			return;
+		}
+
 		const [rows] = await pool.query(
-			"SELECT * FROM usuarios WHERE idUsuario = ?",
-			[idUsuario],
+			"SELECT * FROM usuario WHERE idUsuario = ?",
+			[id],
 		);
 		res.status(200).json(rows);
 	} catch (error) {
