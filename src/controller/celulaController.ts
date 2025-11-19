@@ -67,11 +67,11 @@ export const createCelula = async (
                 d.nomeDisciplina as disciplina,
                 c.nomeCurso as curso,
                 ds.diaSemana
-            FROM Professores p
-            CROSS JOIN Disciplinas d
-            CROSS JOIN Cursos c
-            CROSS JOIN Dia_semana ds
-            CROSS JOIN Alocacao_horario ah
+            FROM professor p
+            CROSS JOIN disciplina d
+            CROSS JOIN curso c
+            CROSS JOIN dia_semana ds
+            CROSS JOIN alocacao_horario ah
             WHERE p.idProfessor = ?
             AND d.idDisciplina = ?
             AND ah.idGrade = ?
@@ -189,7 +189,7 @@ export const deleteCelula = async (
 
 		// Deleta da tabela Alocacao_horario usando o idCelula
 		const [result]: any = await pool.query(
-			`DELETE FROM Alocacao_horario WHERE idCurso_Disciplina_Professor = ?`,
+			`DELETE FROM alocacao_horario WHERE idAlocacaoHorario = ?`,
 			[idCelula],
 		);
 

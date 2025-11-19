@@ -16,7 +16,7 @@ export const getDisponibilidade = async (
 	}
 };
 
-export const getDisponibilidadeById = async (
+export const getDisponibilidadeByProfessor = async (
 	req: Request<{ idProfessor: number }>,
 	res: Response,
 	next: NextFunction,
@@ -55,7 +55,7 @@ export const createDisponibilidade = async (
 			return;
 		}
 		const [result] = await pool.query(
-			`INSERT INTO Professor_Disponibilidade 
+			`INSERT INTO professor_disponibilidade 
         (idProfessor, idDiaSemana) 
         VALUES (?, ?)`,
 			[idProfessor, idDiaSemana],
