@@ -102,7 +102,7 @@ export const createGrade = async (
 		// Admin pode criar grade para qualquer curso
 		if (user.perfil_id === 1) {
 			const [result]: any = await pool.query(
-				"INSERT INTO Grade (idCurso, nome, anoLetivo, semestre) VALUES (?, ?, ?, ?)",
+				"INSERT INTO grade (idCurso, nome, anoLetivo, semestre) VALUES (?, ?, ?, ?)",
 				[idCurso, nome, anoLetivo, semestre],
 			);
 			res.status(201).json({
@@ -138,7 +138,7 @@ export const createGrade = async (
 			}
 
 			const [result]: any = await pool.query(
-				"INSERT INTO Grade (idCurso, nome, anoLetivo, semestre) VALUES (?, ?, ?, ?)",
+				"INSERT INTO grade (idCurso, nome, anoLetivo, semestre) VALUES (?, ?, ?, ?)",
 				[idCurso, nome, anoLetivo, semestre],
 			);
 			res.status(201).json({

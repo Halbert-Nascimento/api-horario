@@ -44,7 +44,7 @@ export const createPerfil = async (
 			return;
 		}
 		const [result]: any = await pool.query(
-			`INSERT INTO perfis (nomePerfil) VALUES (?)`,
+			`INSERT INTO perfil (nomePerfil) VALUES (?)`,
 			[nomePerfil],
 		);
 		res.status(201).json({

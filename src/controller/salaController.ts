@@ -96,7 +96,7 @@ export const createSala = async (
 
 		// Inserir a sala
 		const [result] = await pool.query(
-			`INSERT INTO Salas 
+			`INSERT INTO sala 
       (codigoSala, nomeSala, capacidadeSala, tipoSala, recursos, localizacaoSala) 
       VALUES (?, ?, ?, ?, ?, ?)`,
 			[

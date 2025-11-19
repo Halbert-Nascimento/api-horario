@@ -304,8 +304,8 @@ export const createProfessor = async (
 
 		// Inserir o professor
 		const [result] = await pool.query(
-			`INSERT INTO Professores 
-            (nomeProfessor, email, titulacao, curriculo_lattes, coordenador_idProfessor) 
+			`INSERT INTO professores 
+            (nomeProfessor, email, titulacao, curriculoLattes, idCoordenador) 
             VALUES (?, ?, ?, ?, ?)`,
 			[
 				nomeProfessor,

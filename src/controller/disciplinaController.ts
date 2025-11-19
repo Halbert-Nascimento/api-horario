@@ -154,7 +154,7 @@ export const createDisciplina = async (
 
 		// Inserir a disciplina
 		const [result] = await pool.query(
-			`INSERT INTO Disciplinas 
+			`INSERT INTO disciplina 
 			(codigoDisciplina, nomeDisciplina, cargaHoraria, modalidade, tipoSala, semestreDisciplina) 
 			VALUES (?, ?, ?, ?, ?, ?)`,
 			[

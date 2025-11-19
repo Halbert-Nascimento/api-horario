@@ -64,7 +64,7 @@ export const createCurso = async (
 
 		// Inserir o curso no banco de dados
 		const [result]: any = await pool.query(
-			`INSERT INTO Cursos (nomeCurso, descricaoCurso, duracaoSemestres) VALUES (?, ?, ?)`,
+			`INSERT INTO curso (nomeCurso, descricaoCurso, duracaoSemestres) VALUES (?, ?, ?)`,
 			[nomeCurso, descricaoCurso || null, duracaoSemestres],
 		);
 

@@ -170,7 +170,7 @@ export const createProfessorDisciplina = async (
 			}
 
 			await pool.query(
-				"INSERT INTO Disciplina_Professor (idProfessor, idDisciplina) VALUES (?, ?)",
+				"INSERT INTO disciplina_professor (idProfessor, idDisciplina) VALUES (?, ?)",
 				[idProfessor, idDisciplina],
 			);
 			res.status(201).json({ message: "Vínculo criado com sucesso" });
@@ -231,7 +231,7 @@ export const createProfessorDisciplina = async (
 			}
 
 			await pool.query(
-				"INSERT INTO Disciplina_Professor (idProfessor, idDisciplina) VALUES (?, ?)",
+				"INSERT INTO disciplina_professor (idProfessor, idDisciplina) VALUES (?, ?)",
 				[idProfessor, idDisciplina],
 			);
 			res.status(201).json({ message: "Vínculo criado com sucesso" });
