@@ -6,14 +6,19 @@ import {
 	getProfessorByCoordenador,
 	createProfessor,
 } from "../controller/professorController";
+import { authMiddleware } from "../middleware/authMiddleware";
+import { checkRole } from "../middleware/roleMiddleware";
 
 const router = express.Router();
 
 //Rotas Professor
-router.get("/", getProfessor); // GET /professor
-router.get("/:idProfessor", getProfessorById); // GET /professor/idProfessor
-router.get("/coordenador/:idCoordenador", getProfessorByCoordenador); // GET /professor/coordenador/idCoordenador
-router.get("/curso/:idCurso", getProfessorByCurso); // GET /professor/curso/idCurso
-router.post("/", createProfessor); // POST /professor
+// Todos os perfis autenticados podem visualizar professores
+router.get("/", authMiddleware, getProfessor); // GET /professor
+router.get("/:idProfessor", authMiddleware, getProfessorById); // GET /professor/idProfessor
+router.get("/coordenador/:idCoordenador", authMiddleware, getProfessorByCoordenador); // GET /professor/coordenador/idCoordenador
+router.get("/curso/:idCurso", authMiddleware, getProfessorByCurso); // GET /professor/curso/idCurso
+
+// Apenas Admin pode criar professores
+router.post("/", authMiddleware, checkRole([3]), createProfessor); // POST /professor
 
 export default router;
