@@ -18,8 +18,10 @@ export const checkRole = (allowedRoles: Array<string> | string) => {
 
     // pegar as roles do usuário da requisição (definidas no authMiddleware)
     const userRoles = req.user?.roles || [];
+
     // verificar se o usuário tem pelo menos uma das roles permitidas
     const hasRole = userRoles.some((role: string) => rolesArray.includes(role));
+    // se não tiver, retornar 403
     if (!hasRole) {
       return res.status(403).json({ 
         message: "Acesso negado: você não tem permissão para acessar este recurso." 
