@@ -15,10 +15,10 @@ import { preventProfessorEdit } from "../middleware/permissionMiddleware";
 const router = express.Router();
 
 //Rotas Perfil
-router.get("/",  getDisciplina); // GET /disciplina
-router.get("/:idDisciplina", getDisciplinaById); // GET /disciplina/idDisciplina
-router.get("/curso/:idCurso", getDisciplinaByCurso); // GET /disciplina/curso/idCurso
-router.post("/", createDisciplina); // POST /disciplina
-router.post("/curso", createCursoDisciplina); // POST /disciplina/curso
+router.get("/", authMiddleware,  getDisciplina); // GET /disciplina
+router.get("/:idDisciplina", authMiddleware, getDisciplinaById); // GET /disciplina/idDisciplina
+router.get("/curso/:idCurso", authMiddleware, getDisciplinaByCurso); // GET /disciplina/curso/idCurso
+router.post("/", authMiddleware, createDisciplina); // POST /disciplina
+router.post("/curso", authMiddleware, createCursoDisciplina); // POST /disciplina/curso
 
 export default router;
