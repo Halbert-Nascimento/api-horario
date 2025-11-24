@@ -47,8 +47,8 @@ export const createUsuario = async (
 		const [result]: any = await pool.query(
 			`INSERT INTO usuario 
         (nomeUsuario, emailUsuario, senha, idPerfil, ativo)
-        VALUES (?, ?, ?, ?, 1)`,
-			[nomeUsuario, emailUsuario, senha, idPerfil, ativo],
+        VALUES (?, ?, ?, ?, ?)`,
+			[nomeUsuario, emailUsuario, senha, idPerfil, ativo ?? 1],
 		);
 		res.status(201).json({
 			message: "Usuário criado com sucesso",
