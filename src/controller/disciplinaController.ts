@@ -1,6 +1,12 @@
 import pool from "../config/db";
 import { Request, Response, NextFunction } from "express";
 
+// Definir interface com tipos corretos (string) e index signature
+interface DisciplinaCursoParams extends Record<string, string> {
+	idCurso: string;
+	periodo: string;
+}
+
 export const getDisciplina = async (
 	req: Request,
 	res: Response,
@@ -42,6 +48,35 @@ export const getDisciplinaByCurso = async (
 		const [rows] = await pool.query(
 			"SELECT * FROM vw_disciplina_curso WHERE idCurso = ?",
 			[idCurso],
+		);
+
+		res.status(200).json(rows);
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getDisciplinaByCursoSemestre = async (
+	req: Request<DisciplinaCursoParams>,
+	res: Response,
+	next: NextFunction,
+): Promise<void> => {
+	try {
+		// Converter parâmetros string para number
+		const idCurso = parseInt(req.params.idCurso);
+		const periodo = parseInt(req.params.periodo);
+
+		// Validar conversão
+		if (isNaN(idCurso) || isNaN(periodo)) {
+			res.status(400).json({
+				message: "Parâmetros inválidos. idCurso e periodo devem ser números.",
+			});
+			return;
+		}
+
+		const [rows] = await pool.query(
+			"SELECT * FROM vw_disciplina_curso WHERE idCurso = ? AND periodo = ?",
+			[idCurso, periodo],
 		);
 
 		res.status(200).json(rows);

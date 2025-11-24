@@ -11,6 +11,12 @@ export interface CelulaViewInterface {
 	data_criacao: Date;
 }
 
+export interface CelulaParams {
+	idCurso: string;
+	semestreLetivo: string;
+	anoLetivo: string;
+}
+
 export interface CelulaCursoViewInterface {
 	idCurso: number;
 	curso: string;
@@ -22,8 +28,7 @@ export interface CelulaCursoViewInterface {
 	semestre: string;
 }
 
-
-export interface DbUsuario{
+export interface DbUsuario {
 	idUsuario: number;
 	nomeUsuario: string;
 	emailUsuario: string;
@@ -31,4 +36,3 @@ export interface DbUsuario{
 	idPerfil: number;
 	ativo: boolean;
 }
-

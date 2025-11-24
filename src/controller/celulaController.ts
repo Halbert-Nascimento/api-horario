@@ -1,6 +1,13 @@
 import pool from "../config/db";
 import { Request, Response, NextFunction } from "express";
 
+// Definir interface com index signature
+interface CelulaParams extends Record<string, string> {
+	idCurso: string;
+	semestreLetivo: string;
+	anoLetivo: string;
+}
+
 export const getCelula = async (
 	req: Request,
 	res: Response,
@@ -15,15 +22,28 @@ export const getCelula = async (
 };
 
 export const getCelulaCurso = async (
-	req: Request<{ idCurso: string }>,
+	req: Request<CelulaParams>,
 	res: Response,
 	next: NextFunction,
-) => {
+): Promise<void> => {
 	try {
-		const idCurso = req.params.idCurso;
+		// Converter parâmetros string para number
+		const idCurso = parseInt(req.params.idCurso);
+		const semestreLetivo = parseInt(req.params.semestreLetivo);
+		const anoLetivo = parseInt(req.params.anoLetivo);
+
+		// Validar conversão
+		if (isNaN(idCurso) || isNaN(semestreLetivo) || isNaN(anoLetivo)) {
+			res.status(400).json({
+				message:
+					"Parâmetros inválidos. idCurso, semestreLetivo e anoLetivo devem ser números.",
+			});
+			return;
+		}
+
 		const [rows] = await pool.query(
-			"SELECT * FROM vw_celulas WHERE idCurso = ?",
-			[idCurso],
+			"SELECT * FROM vw_celulas WHERE idCurso = ? AND semestreLetivo = ? AND anoLetivo = ?",
+			[idCurso, semestreLetivo, anoLetivo],
 		);
 
 		if (Array.isArray(rows) && rows.length === 0) {
