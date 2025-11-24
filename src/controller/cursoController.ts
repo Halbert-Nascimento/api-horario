@@ -15,7 +15,7 @@ export const getCurso = async (
 };
 
 export const getCursoById = async (
-	req: Request<{ idCurso: number }>,
+	req: Request<{ idCurso: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {

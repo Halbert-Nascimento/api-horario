@@ -15,7 +15,7 @@ export const getUsuario = async (
 };
 
 export const getUsuarioById = async (
-	req: Request<{ idUsuario: number }>,
+	req: Request<{ idUsuario: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {

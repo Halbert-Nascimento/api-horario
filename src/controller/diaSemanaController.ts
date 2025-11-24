@@ -15,7 +15,7 @@ export const getDiaSemana = async (
 };
 
 export const getDiaSemanaById = async (
-	req: Request<{ idDiaSemana: number }>,
+	req: Request<{ idDiaSemana: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {

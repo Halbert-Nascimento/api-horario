@@ -15,7 +15,7 @@ export const getProfessor = async (
 };
 
 export const getProfessorById = async (
-	req: Request<{ idProfessor: number }>,
+	req: Request<{ idProfessor: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
@@ -33,7 +33,7 @@ export const getProfessorById = async (
 };
 
 export const getProfessorByCoordenador = async (
-	req: Request<{ idCoordenador: number }>,
+	req: Request<{ idCoordenador: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
@@ -50,7 +50,7 @@ export const getProfessorByCoordenador = async (
 };
 
 export const getProfessorByCurso = async (
-	req: Request<{ idCurso: number }>,
+	req: Request<{ idCurso: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
