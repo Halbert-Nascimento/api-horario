@@ -17,7 +17,7 @@ export const checkRole = (allowedRoles: Array<string> | string) => {
 
 
     // pegar as roles do usuário da requisição (definidas no authMiddleware)
-    const userRoles = req.user?.roles || [];
+    const userRoles = user.roles || [];
 
     // verificar se o usuário tem pelo menos uma das roles permitidas
     const hasRole = userRoles.some((role: string) => rolesArray.includes(role));
