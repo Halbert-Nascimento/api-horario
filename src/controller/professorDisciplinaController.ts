@@ -15,7 +15,7 @@ export const getProfessorDisciplina = async (
 };
 
 export const getProfessorDisciplinaById = async (
-	req: Request<{ idDisciplina: number }>,
+	req: Request<{ idDisciplina: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
@@ -53,7 +53,7 @@ export const createProfessorDisciplina = async (
 			return;
 		}
 		const [result] = await pool.query(
-			`INSERT INTO Disciplina_Professor 
+			`INSERT INTO disciplina_professor 
         (idProfessor, idDisciplina) 
         VALUES (?, ?)`,
 			[idProfessor, idDisciplina],

@@ -15,7 +15,7 @@ export const getGrade = async (
 };
 
 export const getGradeById = async (
-	req: Request<{ idGrade: number }>,
+	req: Request<{ idGrade: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {

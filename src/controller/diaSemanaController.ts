@@ -7,7 +7,7 @@ export const getDiaSemana = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM Dia_semana");
+		const [rows] = await pool.query("SELECT * FROM dia_semana");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -15,14 +15,14 @@ export const getDiaSemana = async (
 };
 
 export const getDiaSemanaById = async (
-	req: Request<{ idDiaSemana: number }>,
+	req: Request<{ idDiaSemana: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
 	try {
 		const idDiaSemana = req.params.idDiaSemana;
 		const [rows] = await pool.query(
-			"SELECT * FROM Dia_semana WHERE idDiaSemana = ?",
+			"SELECT * FROM dia_semana WHERE idDiaSemana = ?",
 			[idDiaSemana],
 		);
 

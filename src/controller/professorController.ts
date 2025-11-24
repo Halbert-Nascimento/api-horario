@@ -7,7 +7,7 @@ export const getProfessor = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM Professores");
+		const [rows] = await pool.query("SELECT * FROM professor");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -15,14 +15,14 @@ export const getProfessor = async (
 };
 
 export const getProfessorById = async (
-	req: Request<{ idProfessor: number }>,
+	req: Request<{ idProfessor: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
 	try {
 		const idProfessor = req.params.idProfessor;
 		const [rows] = await pool.query(
-			"SELECT * FROM Professores WHERE idProfessor = ?",
+			"SELECT * FROM professor WHERE idProfessor = ?",
 			[idProfessor],
 		);
 
@@ -33,15 +33,15 @@ export const getProfessorById = async (
 };
 
 export const getProfessorByCoordenador = async (
-	req: Request<{ coordenador_idProfessor: number }>,
+	req: Request<{ idCoordenador: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
 	try {
-		const coordenador_idProfessor = req.params.coordenador_idProfessor;
+		const idCoordenador = req.params.idCoordenador;
 		const [rows] = await pool.query(
-			"SELECT * FROM vw_professor_coordenador WHERE coordenador_idProfessor = ?",
-			[coordenador_idProfessor],
+			"SELECT * FROM vw_professor_coordenador WHERE idCoordenador = ?",
+			[idCoordenador],
 		);
 		res.status(200).json(rows);
 	} catch (error) {
@@ -50,7 +50,7 @@ export const getProfessorByCoordenador = async (
 };
 
 export const getProfessorByCurso = async (
-	req: Request<{ idCurso: number }>,
+	req: Request<{ idCurso: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
@@ -77,8 +77,8 @@ export const createProfessor = async (
 			nomeProfessor,
 			email,
 			titulacao,
-			curriculo_lattes,
-			coordenador_idProfessor,
+			curriculoLattes,
+			idCoordenador,
 		} = req.body;
 
 		// Validação dos campos obrigatórios
@@ -100,11 +100,11 @@ export const createProfessor = async (
 
 		// Validação da titulação
 		const titulacoesValidas = [
-			"Graduado",
-			"Especialista",
-			"Mestre",
-			"Doutor",
-			"Pos Doutor",
+			"graduado",
+			"especialista",
+			"mestre",
+			"doutor",
+			"doutora",
 		];
 		if (!titulacoesValidas.includes(titulacao)) {
 			res.status(400).json({
@@ -116,7 +116,7 @@ export const createProfessor = async (
 
 		// Verificar se o email já está cadastrado
 		const [emailExists]: any = await pool.query(
-			"SELECT idProfessor FROM Professores WHERE email = ?",
+			"SELECT idProfessor FROM professor WHERE email = ?",
 			[email],
 		);
 
@@ -127,11 +127,11 @@ export const createProfessor = async (
 			return;
 		}
 
-		// Se coordenador_idProfessor foi fornecido, validar se existe
-		if (coordenador_idProfessor) {
+		// Se idCoordenador foi fornecido, validar se existe
+		if (idCoordenador) {
 			const [coordenadorRows]: any = await pool.query(
-				"SELECT idProfessor FROM Professores WHERE idProfessor = ?",
-				[coordenador_idProfessor],
+				"SELECT idProfessor FROM professor WHERE idProfessor = ?",
+				[idCoordenador],
 			);
 
 			if (!Array.isArray(coordenadorRows) || coordenadorRows.length === 0) {
@@ -144,15 +144,15 @@ export const createProfessor = async (
 
 		// Inserir o professor
 		const [result] = await pool.query(
-			`INSERT INTO Professores 
-            (nomeProfessor, email, titulacao, curriculo_lattes, coordenador_idProfessor) 
+			`INSERT INTO professor 
+            (nomeProfessor, email, titulacao, curriculoLattes, idCoordenador) 
             VALUES (?, ?, ?, ?, ?)`,
 			[
 				nomeProfessor,
 				email,
 				titulacao,
-				curriculo_lattes || null,
-				coordenador_idProfessor || null,
+				curriculoLattes || null,
+				idCoordenador || null,
 			],
 		);
 
@@ -165,8 +165,8 @@ export const createProfessor = async (
 				nomeProfessor,
 				email,
 				titulacao,
-				curriculo_lattes: curriculo_lattes || null,
-				coordenador_idProfessor: coordenador_idProfessor || null,
+				curriculoLattes: curriculoLattes || null,
+				idCoordenador: idCoordenador || null,
 			},
 		});
 	} catch (error) {

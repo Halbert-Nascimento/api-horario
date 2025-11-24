@@ -5,11 +5,15 @@ import {
 	createProfessorDisciplina,
 } from "../controller/professorDisciplinaController";
 
+// Importar middlewares de autenticação e permissão
+import { authMiddleware } from "../middleware/authMiddleware";
+import { checkRole } from "../middleware/roleMiddleware";
+
 const router = express.Router();
 
-//Rotas Perfil
-router.get("/", getProfessorDisciplina); // GET /professorDisciplina
-router.get("/:idDisciplina", getProfessorDisciplinaById); // GET /professorDisciplina/idDisciplina
-router.post("/", createProfessorDisciplina); // POST /professorDisciplina
+//Rotas Professor-Disciplina
+router.get("/", authMiddleware, getProfessorDisciplina); // GET /professorDisciplina
+router.get("/:idDisciplina", authMiddleware, getProfessorDisciplinaById); // GET /professorDisciplina/idDisciplina
+router.post("/", authMiddleware, checkRole(["admin", "coordenador"]), createProfessorDisciplina); // POST /professorDisciplina - Admin e Coordenador
 
 export default router;

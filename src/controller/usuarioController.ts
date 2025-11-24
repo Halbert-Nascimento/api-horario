@@ -7,7 +7,7 @@ export const getUsuario = async (
 	next: NextFunction,
 ) => {
 	try {
-		const [rows] = await pool.query("SELECT * FROM usuarios");
+		const [rows] = await pool.query("SELECT * FROM usuario");
 		res.status(200).json(rows);
 	} catch (error) {
 		next(error);
@@ -15,14 +15,14 @@ export const getUsuario = async (
 };
 
 export const getUsuarioById = async (
-	req: Request<{ idUsuario: number }>,
+	req: Request<{ idUsuario: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
 	try {
 		const idUsuario = req.params.idUsuario;
 		const [rows] = await pool.query(
-			"SELECT * FROM usuarios WHERE idUsuario = ?",
+			"SELECT * FROM usuario WHERE idUsuario = ?",
 			[idUsuario],
 		);
 		res.status(200).json(rows);
@@ -45,10 +45,10 @@ export const createUsuario = async (
 			return;
 		}
 		const [result]: any = await pool.query(
-			`INSERT INTO usuarios 
+			`INSERT INTO usuario 
         (nomeUsuario, emailUsuario, senha, idPerfil, ativo)
-        VALUES (?, ?, ?, ?, 1)`,
-			[nomeUsuario, emailUsuario, senha, idPerfil, ativo],
+        VALUES (?, ?, ?, ?, ?)`,
+			[nomeUsuario, emailUsuario, senha, idPerfil, ativo ?? 1],
 		);
 		res.status(201).json({
 			message: "Usuário criado com sucesso",
