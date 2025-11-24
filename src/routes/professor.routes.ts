@@ -9,7 +9,7 @@ import {
 
 // Importar middlewares de autenticação e permissão
 import { authMiddleware } from "../middleware/authMiddleware";
-import { preventProfessorEdit } from "../middleware/permissionMiddleware";
+import { checkRole } from "../middleware/roleMiddleware";
 
 const router = express.Router();
 
@@ -18,6 +18,6 @@ router.get("/", authMiddleware, getProfessor); // GET /professor
 router.get("/:idProfessor", authMiddleware, getProfessorById); // GET /professor/idProfessor
 router.get("/coordenador/:idCoordenador", authMiddleware, getProfessorByCoordenador); // GET /professor/coordenador/idCoordenador
 router.get("/curso/:idCurso", authMiddleware, getProfessorByCurso); // GET /professor/curso/idCurso
-router.post("/", authMiddleware, preventProfessorEdit, createProfessor); // POST /professor
+router.post("/", authMiddleware, checkRole(["admin", "coordenador"]), createProfessor); // POST /professor - Admin e Coordenador
 
 export default router;
