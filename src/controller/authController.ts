@@ -88,7 +88,7 @@ export const login = async (req: Request, res: Response) => {
     const tokenPayload = {
       idUsuario: user.idUsuario,
       nomeUsuario: user.nomeUsuario,
-      email: user.emailUsuario,
+      emailUsuario: user.emailUsuario,
       idPerfil: user.idPerfil,
       nomePerfil: nomePerfil,
       idCurso: idCurso,
@@ -107,9 +107,12 @@ export const login = async (req: Request, res: Response) => {
       token,
       user: {
         idUsuario: user.idUsuario,
-        nome: user.nomeUsuario,
-        email: user.emailUsuario,
-        perfil: nomePerfil,
+        nomeUsuario: user.nomeUsuario,
+        emailUsuario: user.emailUsuario,
+        idPerfil: user.idPerfil,
+        nomePerfil: nomePerfil,
+        idCurso: idCurso,
+        nomeCurso: nomeCurso,
         roles: tokenPayload.roles,
       },
     });
