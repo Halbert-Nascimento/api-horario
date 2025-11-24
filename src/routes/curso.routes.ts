@@ -5,11 +5,15 @@ import {
 	createCurso,
 } from "../controller/cursoController";
 
+// Importar middlewares de autenticação e permissão
+import { authMiddleware } from "../middleware/authMiddleware";
+import { preventProfessorEdit } from "../middleware/permissionMiddleware";
+
 const router = express.Router();
 
-//Rotas Perfil
-router.get("/", getCurso); // GET /curso
-router.get("/:idCurso", getCursoById); // GET /curso/idCurso
-router.post("/", createCurso); // POST /curso
+//Rotas Curso
+router.get("/", authMiddleware, getCurso); // GET /curso
+router.get("/:idCurso", authMiddleware, getCursoById); // GET /curso/idCurso
+router.post("/", authMiddleware, preventProfessorEdit, createCurso); // POST /curso
 
 export default router;

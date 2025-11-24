@@ -4,10 +4,13 @@ import {
 	getDiaSemanaById,
 } from "../controller/diaSemanaController";
 
+// Importar middleware de autenticação
+import { authMiddleware } from "../middleware/authMiddleware";
+
 const router = express.Router();
 
-//Rotas Perfil
-router.get("/", getDiaSemana); // GET /diaSemana
-router.get("/:idDiaSemana", getDiaSemanaById); // GET /diaSemana/idDiaSemana
+//Rotas Dia da Semana
+router.get("/", authMiddleware, getDiaSemana); // GET /diaSemana
+router.get("/:idDiaSemana", authMiddleware, getDiaSemanaById); // GET /diaSemana/idDiaSemana
 
 export default router;

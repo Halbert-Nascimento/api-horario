@@ -5,11 +5,15 @@ import {
 	createUsuario,
 } from "../controller/usuarioController";
 
+// Importar middlewares de autenticação e permissão
+import { authMiddleware } from "../middleware/authMiddleware";
+import { preventProfessorEdit } from "../middleware/permissionMiddleware";
+
 const router = express.Router();
 
 //Rotas Usuario
-router.get("/", getUsuario); // GET /usuario
-router.get("/:idUsuario", getUsuarioById); // GET /usuario/idUsuario
-router.post("/", createUsuario); // POST /usuario
+router.get("/", authMiddleware, getUsuario); // GET /usuario
+router.get("/:idUsuario", authMiddleware, getUsuarioById); // GET /usuario/idUsuario
+router.post("/", authMiddleware, preventProfessorEdit, createUsuario); // POST /usuario
 
 export default router;

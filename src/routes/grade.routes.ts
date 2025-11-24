@@ -5,11 +5,15 @@ import {
 	createGrade,
 } from "../controller/gradeController";
 
+// Importar middlewares de autenticação e permissão
+import { authMiddleware } from "../middleware/authMiddleware";
+import { preventProfessorEdit } from "../middleware/permissionMiddleware";
+
 const router = express.Router();
 
-//Rotas Perfil
-router.get("/", getGrade); // GET /grade
-router.get("/:idGrade", getGradeById); // GET /grade/idGrade
-router.post("/", createGrade); // POST /grade
+//Rotas Grade
+router.get("/", authMiddleware, getGrade); // GET /grade
+router.get("/:idGrade", authMiddleware, getGradeById); // GET /grade/idGrade
+router.post("/", authMiddleware, preventProfessorEdit, createGrade); // POST /grade
 
 export default router;
