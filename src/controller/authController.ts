@@ -59,19 +59,40 @@ export const login = async (req: Request, res: Response) => {
 
       nomePerfil = perfil[0]?.nomePerfil || null;
     }
+
+    let idCurso = null;
+    let nomeCurso = null;
+
+    const [userCursoRows]: any = await pool.query(
+      `SELECT idCurso, nomeCurso FROM vw_usuario_curso 
+      WHERE idUsuario = ?`,
+      [user.idUsuario]
+    );
+
+    if (userCursoRows.length > 0) {
+      idCurso = userCursoRows[0].idCurso;
+      nomeCurso = userCursoRows[0].nomeCurso;
+    }
+
+
+
     // definir as roles do usuário com base no nome do perfil
     let roles: string[] = [];
     if(nomePerfil){
       roles.push(nomePerfil);
     }
 
+
     // criar o payload do token
     const JWT_SECRET = process.env.JWT_SECRET as string;
     const tokenPayload = {
       idUsuario: user.idUsuario,
+      nomeUsuario: user.nomeUsuario,
       email: user.emailUsuario,
       idPerfil: user.idPerfil,
       nomePerfil: nomePerfil,
+      idCurso: idCurso,
+      nomeCurso: nomeCurso,
       roles: roles, // array para armazenar as roles do usuário
     };
 
