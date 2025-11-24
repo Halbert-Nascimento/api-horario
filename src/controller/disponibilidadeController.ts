@@ -17,7 +17,7 @@ export const getDisponibilidade = async (
 };
 
 export const getDisponibilidadeByProfessor = async (
-	req: Request<{ idProfessor: number }>,
+	req: Request<{ idProfessor: string }>,
 	res: Response,
 	next: NextFunction,
 ) => {
