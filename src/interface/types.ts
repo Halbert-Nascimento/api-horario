@@ -21,3 +21,14 @@ export interface CelulaCursoViewInterface {
 	dia_semana: string;
 	semestre: string;
 }
+
+
+export interface DbUsuario{
+	idUsuario: number;
+	nomeUsuario: string;
+	emailUsuario: string;
+	senhaUsuario: string;
+	idPerfil: number;
+	ativo: boolean;
+}
+
