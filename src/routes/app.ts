@@ -17,9 +17,26 @@ import authRoutes from "./auth.routes";
 
 const app = express();
 
+// Lista de origens permitidas
+const allowedOrigins = [
+	"http://localhost:3000",
+	"http://72.60.142.42:9006",
+	process.env.FRONTEND_URL, // Permite configurar via variável de ambiente
+].filter(Boolean); // Remove valores undefined
+
 app.use(
 	cors({
-		origin: "http://localhost:3000", // Permite requisições do seu frontend
+		origin: (origin, callback) => {
+			// Permite requisições sem origin (como Postman, curl, etc)
+			if (!origin) return callback(null, true);
+			
+			// Verifica se a origin está na lista de permitidas
+			if (allowedOrigins.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(new Error(`Origin ${origin} not allowed by CORS`));
+			}
+		},
 		methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 		allowedHeaders: ["Content-Type", "Authorization"],
 		credentials: true,
